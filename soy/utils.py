@@ -29,4 +29,4 @@ def commit(tmpl, path, **kwargs):
 
         return True
     except Exception:
-        raise Exception
+        return False
