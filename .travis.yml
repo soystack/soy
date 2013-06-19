@@ -3,4 +3,4 @@ python: "2.6"
 install:
     - "pip install jinja2"
     - "pip install mock"
-script: "python setup.py install && nosetests -w tests/"
+script: "python setup.py install && nosetests -w soy/tests/"
