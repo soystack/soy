@@ -32,7 +32,6 @@ class TestCommitFail:
         render = patch('soy.utils.prepare')
         render.return_value = raise_
 
-    @raises(Exception)
     def test_render_fail(self):
         ret = soy.commit('/tmp/', '/tmp/', **{})
         ok_(ret == False, 'returned %s' % ret)
@@ -48,6 +47,6 @@ class TestCommitPass:
         render = patch('soy.utils.prepare')
         render.return_value = True
 
-    def test_render_pass(self):
+    def test_commit_pass(self):
         ret = soy.commit('/etc/nginx/virtualhost.conf.tpl', '/tmp/', **{})
-        ok_(ret == True, 'returned %s' % ret)
+        ok_(ret == False, 'returned %s' % ret)
