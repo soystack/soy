@@ -28,7 +28,7 @@ class TestCommitFail:
 
         soy.prepare = Mock(return_value=raise_)
 
-    def test_render_fail(self):
+    def test_commit_fail(self):
         ret = soy.commit('/tmp/', '/tmp/', **{})
         ok_(ret == False, 'returned %s' % ret)
 
