@@ -12,5 +12,4 @@ script:
     - "nosetests --with-coverage --cover-package=soy"
     #- "coverage run --source=soy,soy/tests setup.py install"
     #- "coverage report"
-    - "coverage report --include=soy/*.py"
 after_success: "coveralls"
