@@ -7,5 +7,8 @@ install:
     - "pip install coveralls --use-mirrors"
 before_script:
     - "touch /tmp/test"
-script: "python setup.py install && nosetests --with-coverage --source=soy --cover-package=soy"
+script:
+    - "python setup.py install && nosetests --with-coverage --cover-package=soy"
+    - "coverage run --source=coveralls setup.py test"
+    - "coverage report -m"
 after_success: "coveralls"
