@@ -9,6 +9,6 @@ before_script:
     - "touch /tmp/test"
 script:
     - "python setup.py install && nosetests --with-coverage --cover-package=soy"
-    - "coverage run --source=tests setup.py install"
+    - "coverage run --source=soy/tests setup.py install"
     - "coverage report"
 after_success: "coveralls"
