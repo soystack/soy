@@ -20,13 +20,11 @@ class TestPreparePass:
     def test_render_pass(self):
         ret = soy.prepare(None,'/tmp/test.file')
         ok_(ret == True, 'returned %s' % ret)
-'''
+
 class TestCommitFail:
     def setUp(self):
         jinja = patch('jinja2.Template')
         jinja.return_value = raise_
-
-        soy.prepare = Mock(return_value=raise_)
 
     def test_commit_fail(self):
         ret = soy.commit('/tmp/', '/tmp/', **{})
@@ -37,9 +35,6 @@ class TestCommitPass:
         jinja = patch('jinja2.Template')
         jinja.return_value = True
 
-        soy.prepare = Mock(return_value=True)
-
     def test_commit_pass(self):
-        ret = soy.commit('test.file', 'test.file', **{})
+        ret = soy.commit('/tmp/test', '/tmp/dsakfljhdalkfhdas', **{})
         ok_(ret == True, 'returned %s' % ret)
-'''

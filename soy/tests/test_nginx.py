@@ -161,7 +161,6 @@ class TestCreateFail:
         ret = inst.create()
         ok_(ret == False, 'returned %s' % ret)
 
-
 class TestDeleteFail:
     '''
     init
@@ -176,13 +175,10 @@ class TestDeleteFail:
 
         jinja = patch('jinja2.Template')
         jinja.return_value = raise_
-
         openfile = patch('__builtin__.open')
         openfile.return_value = raise_
-
         prepare = patch('soy.utils.prepare')
         prepare.return_value = raise_
-
         commit = patch('soy.utils.commit')
         commit.return_value = raise_
 
@@ -209,10 +205,20 @@ class TestDeleteFail:
         ret  = inst.suspend()
         ok_(ret == False, 'returned %s' % ret)
 
-    #@raises(Exception)
     def test_unsuspend_fail(self):
         inst = Host(self.__salt__, **self.vars)
         ret  = inst.unsuspend()
+        ok_(ret == False, 'returned %s' % ret)
+
+    def test_delete_user(self):
+        inst = Host(self.__salt__, **self.vars)
+        ret = inst.delete(user=True)
+        ok_(ret == False, 'returned %s' % ret)
+
+    def test_delete_enable(self):
+        self.__salt__['file.remove'] = Mock(return_value=False)
+        inst = Host(self.__salt__, **self.vars)
+        ret = inst.delete()
         ok_(ret == False, 'returned %s' % ret)
 
 class TestDeletePass:

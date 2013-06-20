@@ -74,15 +74,11 @@ class Host(object):
             enabled = '%s%s.conf' % (self.pillar['enabled'], self.host)
             available = '%s%s.conf' % (self.pillar['available'], self.host)
             base = '%s%s/' % (self.pillar['base'], self.user)
-            if self.salt['file.remove'](available) is False:
-                raise OSError
-            if self.salt['file.remove'](enabled) is False:
-                raise OSError
-            if self.salt['file.remove']('%s%s' % (base, self.host)) is False:
-                raise OSError
-            if user is not False:
-                if self.salt['file.remove'](base) is False:
-                    raise OSError
+            self.salt['file.remove'](available)
+            self.salt['file.remove'](enabled)
+            self.salt['file.remove']('%s%s' % (base, self.host))
+            if user is True:
+                self.salt['file.remove'](base)
             self.salt['nginx.signal']('reload')
             return True
         except (OSError, IOError, KeyError):
