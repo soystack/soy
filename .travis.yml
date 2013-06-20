@@ -5,7 +5,8 @@ install:
     - "pip install mock"
     - "pip install coverage"
     - "pip install coveralls --use-mirrors"
+    - "pip install nose-cov"
 before_script:
     - "touch /tmp/test"
-script: "python setup.py install && nosetests --with-coverage --cover-package=soy"
+script: "python setup.py install && nosetests --with-coverage --cov-config .coveragerc --cover-package=soy"
 after_success: "coveralls"
