@@ -211,14 +211,9 @@ class TestDeleteFail:
         ok_(ret == False, 'returned %s' % ret)
 
     def test_delete_user(self):
+        self.__salt__['file.remove'] = Mock(return_value=raise_)
         inst = Host(self.__salt__, **self.vars)
         ret = inst.delete(user=True)
-        ok_(ret == False, 'returned %s' % ret)
-
-    def test_delete_enable(self):
-        self.__salt__['file.remove'] = Mock(return_value=False)
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.delete()
         ok_(ret == False, 'returned %s' % ret)
 
 class TestDeletePass:
