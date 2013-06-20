@@ -13,7 +13,7 @@ def raise_(*args): raise OSError
 
 class TestPrepareFail:
     def test_render_fail(self):
-        ret = soy.prepare(None,'/fakedir/')
+        ret = soy.prepare(None,'test.file')
         ok_(ret == False, 'returned %s' % ret)
 
 class TestPreparePass:
