@@ -13,4 +13,5 @@ script:
     - "nosetests --doctest-extension=tests --cover-tests --with-coverage --cover-package=soy"
     #- "coverage run --source=soy,soy/tests setup.py install"
     #- "coverage report"
+    - "cd soy"
 after_success: "coveralls"
