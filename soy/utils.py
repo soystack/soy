@@ -25,6 +25,7 @@ def commit(tmpl, path, **kwargs):
     '''
     try:
         include = Template(open(tmpl, 'r+').read())
-        return prepare(include.render(**kwargs), path)
+        return include
+        #return prepare(include.render(**kwargs), path)
     except Exception:
         return False
