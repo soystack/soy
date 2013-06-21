@@ -1,5 +1,7 @@
 language: python
-python: "2.6"
+python:
+    - "2.7"
+    - "2.6"
 install:
     - "pip install jinja2"
     - "pip install mock"
@@ -8,8 +10,5 @@ install:
 before_script:
     - "touch /tmp/test"
 script:
-    #- "python setup.py install"
     - "nosetests --with-coverage --cover-package=soy"
-    #- "coverage run --source=soy,soy/tests setup.py install"
-    #- "coverage report"
 after_success: "coveralls"
