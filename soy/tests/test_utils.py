@@ -7,7 +7,7 @@ soy nginx function for rendering host configuration files.
 import nose
 from nose.tools import raises, ok_
 import soy.utils as soy
-from mock import patch, Mock
+from mock import patch, Mock, PropertyMock
 
 class TestPrepareFail:
     def test_render_fail(self):
