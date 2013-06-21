@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-'''
-Nose test for insuring quality assurance.
-'''
+from soy.nginx import Host
+#!/usr/bin/env python
 
 from soy.nginx import Host
 import nose
 from nose.tools import raises, ok_
-from mock import Mock, patch
+from mock import Mock, patch, PropertyMock
 
 Pillar_raw = lambda x: { 'enabled': '/tmp/',
                          'available': '/tmp/',
@@ -23,35 +22,17 @@ Pillar_raw = lambda x: { 'enabled': '/tmp/',
                          'sushtml': '/etc/nginx/suspended.html.tpl',
                          'sushtdocs': '/var/www/suspended/htdocs/index.html' }
 
-
-def raise_(*args):
-    '''
-    raise lambda error
-    '''
-    raise OSError
-
 class TestCreatePass:
-    '''
-    init
-    '''
-    def __init__(self):
-        pass
 
     def setUp(self):
-        '''
-        set up
-        '''
         jinja = patch('jinja2.Template')
-        jinja.return_value = True
-
+        jinja.retrn_value = True
         openfile = patch('__builtin__.open')
-        openfile.return_value = True
-
+        openfile.retrn_value = True
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = True
-
+        prepare.retrn_value = True
         commit = patch('soy.utils.commit')
-        commit.return_value = True
+        commit.retrn_value = True
 
         self.vars = {
             'user': 'user',
@@ -67,57 +48,43 @@ class TestCreatePass:
         }
 
     def test_mkconf_pass(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.mkconf()
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = t.mkconf()
+        ok_(rv == True, 'returned %s' % rv)
 
     def test_mksource_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.mksource('/tmp/')
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = t.mksource('/tmp/')
+        ok_(rv == True, 'returned %s' % rv)
 
     def test_mkdir_pass(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.mkdir('/tmp/')
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = rv.mkdir('/tmp/')
+        ok_(rv == True, 'returned %s' % rv)
 
     def test_mklog_pass(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.mklog('/tmp/')
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = rv.mklog('/tmp/')
+        ok_(rv == True, 'returned %s' % rv)
 
     def test_create_pass(self):
-        inst = Host(self.__salt__, **self.vars)
-        inst.mkconf = lambda: True
-        inst.mkph = lambda x: True
-        inst.mklog = lambda x: True
-        ret = inst.create()
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        t.mkconf = lambda: True
+        t.mksource = lambda x: True
+        t.mklog = lambda x: True
+        rv = t.create()
+        ok_(rv == True, 'returned %s' % rv)
 
 class TestCreateFail:
-    '''
-    init
-    '''
-    def __init__(self):
-        pass
-
     def setUp(self):
-        '''
-        set up
-        '''
-        def raise_(e): raise OSError
-
         jinja = patch('jinja2.Template')
-        jinja.return_value = raise_
-
+        jinja.retrn_value = PropertyMock(side_effect=OSError)
         openfile = patch('__builtin__.open')
-        openfile.return_value = raise_
-
+        openfile.retrn_value = PropertyMock(side_effect=OSError)
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = raise_
-
+        prepare.retrn_value = PropertyMock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        prepare.return_value = raise_
+        prepare.retrn_value = PropertyMock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -126,61 +93,51 @@ class TestCreateFail:
 
         self.__salt__ = {
             'pillar.raw': Pillar_raw,
-            'file.remove': lambda x: raise_(Exception()),
-            'file.symlink': lambda x, y: raise_(Exception()),
-            'file.mkdir': lambda x: raise_(Exception()),
-            'nginx.signal': lambda x: raise_(Exception())
+            'file.remove': lambda x: PropertyMock(side_effect=OSError),
+            'file.symlink': lambda x, y: PropertyMock(side_effect=OSError),
+            'file.mkdir': lambda x: PropertyMock(side_effect=OSError),
+            'nginx.signal': lambda x: PropertyMock(side_effect=OSError)
         }
 
     def test_mkconf_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.mkconf()
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = t.mkconf()
+        ok_(rv == False, 'returned %s' % rv)
 
     @raises(OSError)
     def test_mksource_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.mksource('/tmp/')
+        t = Host(self.__salt__, **self.vars)
+        rv = t.mksource('/tmp/')
 
     def test_mkdir_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.mkdir('/tmp/')
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = t.mkdir('/tmp/')
+        ok_(rv == False, 'returned %s' % rv)
 
     def test_mklog_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.mklog('/tmp/')
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = t.mklog('/tmp/')
+        ok_(rv == False, 'returned %s' % rv)
 
     def test_create_fail(self):
-        def raise_(): raise OSError
-        inst = Host(self.__salt__, **self.vars)
-        inst.mkconf = lambda: raise_()
-        inst.mkph = lambda x: raise_()
-        inst.mklog = lambda x: raise_()
-        ret = inst.create()
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        t.mkconf = lambda: PropertyMock(side_effect=OSError)
+        t.mksource = lambda x: PropertyMock(side_effect=OSError)
+        t.mklog = lambda x: PropertyMock(side_effect=OSError)
+        rv = t.create()
+        ok_(rv == False, 'returned %s' % rv)
 
 class TestDeleteFail:
-    '''
-    init
-    '''
-    def __init__(self):
-        pass
 
     def setUp(self):
-        '''
-        set up
-        '''
-
         jinja = patch('jinja2.Template')
-        jinja.return_value = raise_
+        jinja.retrn_value = PropertyMock(side_effect=OSError)
         openfile = patch('__builtin__.open')
-        openfile.return_value = raise_
+        openfile.retrn_value = PropertyMock(side_effect=OSError)
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = raise_
+        prepare.retrn_value = PropertyMock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        commit.return_value = raise_
+        commit.retrn_value = PropertyMock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -189,60 +146,50 @@ class TestDeleteFail:
 
         self.__salt__ = {
             'pillar.raw': Pillar_raw,
-            'file.remove': lambda x: raise_(),
-            'file.symlink': lambda x, y: raise_(),
-            'file.mkdir': lambda x: raise_(),
-            'nginx.signal': lambda x: raise_()
+            'file.remove': lambda x: PropertyMock(side_effect=OSError),
+            'file.symlink': lambda x, y: PropertyMock(side_effect=OSError),
+            'file.mkdir': lambda x: PropertyMock(side_effect=OSError),
+            'nginx.signal': lambda x: PropertyMock(side_effect=OSError)
         }
 
     def test_delete_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.delete()
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv  = t.delete()
+        ok_(rv == False, 'returned %s' % rv)
 
     def test_suspend_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.suspend()
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv  = t.suspend()
+        ok_(rv == False, 'returned %s' % rv)
 
     def test_unsuspend_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.unsuspend()
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv  = t.unsuspend()
+        ok_(rv == False, 'returned %s' % rv)
 
     def test_delete_user(self):
-        self.__salt__['file.remove'] = Mock(return_value=raise_)
-        inst = Host(self.__salt__, **self.vars)
-        ret = inst.delete(user=True)
-        ok_(ret == False, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv = t.delete(user=True)
+        ok_(rv == False, 'returned %s' % rv)
 
 class TestDeletePass:
-    '''
-    init
-    '''
-    def __init__(self):
-        pass
 
     def setUp(self):
-
         jinja = patch('jinja2.Template')
-        jinja.return_value = True
-
+        jinja.retrn_value = True
         openfile = patch('__builtin__.open')
-        openfile.return_value = True
-
+        openfile.retrn_value = True
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = True
-
+        prepare.retrn_value = True
         commit = patch('soy.utils.commit')
-        commit.return_value = True
+        commit.retrn_value = True
 
         self.vars = {
             'user': 'user',
             'host': 'test.com'
         }
         self.__salt__ = {
-            'pillar.raw': Pillar_raw,
+            'pillar.raw': Pillar_raw,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
             'file.remove': lambda x: True,
             'file.symlink': lambda x, y: True,
             'file.mkdir': lambda x: True,
@@ -250,17 +197,16 @@ class TestDeletePass:
         }
 
     def test_delete_pass(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.delete()
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv  = t.delete()
+        ok_(rv == True, 'returned %s' % rv)
 
     def test_suspend_pass(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.suspend()
-        ok_(ret == True, 'returned %s' % ret)
+        t = Host(self.__salt__, **self.vars)
+        rv  = t.suspend()
+        ok_(rv == True, 'returned %s' % rv)
 
     def test_unsuspend_fail(self):
-        inst = Host(self.__salt__, **self.vars)
-        ret  = inst.unsuspend()
-        ok_(ret == True, 'returned %s' % ret)
-
+        t = Host(self.__salt__, **self.vars)
+        rv  = t.unsuspend()
+        ok_(rv == True, 'returned %s' % rv)
