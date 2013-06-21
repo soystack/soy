@@ -9,8 +9,6 @@ from nose.tools import raises, ok_
 import soy.utils as soy
 from mock import patch, Mock
 
-def raise_(*args): raise OSError
-
 class TestPrepareFail:
     def test_render_fail(self):
         ret = soy.prepare(None,'/fake/')
@@ -24,7 +22,7 @@ class TestPreparePass:
 class TestCommitFail:
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.return_value = raise_
+        jinja.return_value = raise
 
     def test_commit_fail(self):
         ret = soy.commit('/tmp/', '/tmp/', **{})
