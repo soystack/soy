@@ -67,7 +67,7 @@ class TestCreatePass:
     def test_create_pass(self):
         t = Host(self.__salt__, **self.vars)
         t.mkconf = lambda: True
-        t.mksource = lambda x: True
+        t.mkdir = lambda x: True
         t.mklog = lambda x: True
         rv = t.create()
         ok_(rv == True, 'returned %s' % rv)
@@ -75,13 +75,13 @@ class TestCreatePass:
 class TestCreateFail:
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.return_value = PropertyMock(side_effect=OSError)
+        jinja.return_value = Mock(side_effect=OSError)
         openfile = patch('__builtin__.open')
-        openfile.return_value = PropertyMock(side_effect=OSError)
+        openfile.return_value = Mock(side_effect=OSError)
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = PropertyMock(side_effect=OSError)
+        prepare.return_value = Mock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        prepare.return_value = PropertyMock(side_effect=OSError)
+        prepare.return_value = Mock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -90,10 +90,10 @@ class TestCreateFail:
 
         self.__salt__ = {
             'pillar.raw': Pillar_raw,
-            'file.remove': lambda x: PropertyMock(side_effect=OSError),
-            'file.symlink': lambda x, y: PropertyMock(side_effect=OSError),
-            'file.mkdir': lambda x: PropertyMock(side_effect=OSError),
-            'nginx.signal': lambda x: PropertyMock(side_effect=OSError)
+            'file.remove': Mock(side_effect=OSError),
+            'file.symlink': Mock(side_effect=OSError),
+            'file.mkdir': Mock(side_effect=OSError),
+            'nginx.signal': Mock(side_effect=OSError)
         }
 
     def test_mkconf_fail(self):
@@ -118,9 +118,9 @@ class TestCreateFail:
 
     def test_create_fail(self):
         t = Host(self.__salt__, **self.vars)
-        t.mkconf = lambda: PropertyMock(side_effect=OSError)
-        t.mksource = lambda x: PropertyMock(side_effect=OSError)
-        t.mklog = lambda x: PropertyMock(side_effect=OSError)
+        t.mkconf = Mock(side_effect=OSError)
+        t.mkdir = Mock(side_effect=OSError)
+        t.mklog = Mock(side_effect=OSError)
         rv = t.create()
         ok_(rv == False, 'returned %s' % rv)
 
@@ -128,13 +128,13 @@ class TestDeleteFail:
 
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.return_value = PropertyMock(side_effect=OSError)
+        jinja.return_value = Mock(side_effect=OSError)
         openfile = patch('__builtin__.open')
-        openfile.return_value = PropertyMock(side_effect=OSError)
+        openfile.return_value = Mock(side_effect=OSError)
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = PropertyMock(side_effect=OSError)
+        prepare.return_value = Mock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        commit.return_value = PropertyMock(side_effect=OSError)
+        commit.return_value = Mock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -143,10 +143,10 @@ class TestDeleteFail:
 
         self.__salt__ = {
             'pillar.raw': Pillar_raw,
-            'file.remove': lambda x: PropertyMock(side_effect=OSError),
-            'file.symlink': lambda x, y: PropertyMock(side_effect=OSError),
-            'file.mkdir': lambda x: PropertyMock(side_effect=OSError),
-            'nginx.signal': lambda x: PropertyMock(side_effect=OSError)
+            'file.remove': Mock(side_effect=OSError),
+            'file.symlink': Mock(side_effect=OSError),
+            'file.mkdir': Mock(side_effect=OSError),
+            'nginx.signal': Mock(side_effect=OSError)
         }
 
     def test_delete_fail(self):
@@ -180,7 +180,7 @@ class TestDeletePass:
         prepare.return_value = True
         commit = patch('soy.utils.commit')
         commit.return_value = True
-        
+
         self.vars = {
             'user': 'user',
             'host': 'test.com'
