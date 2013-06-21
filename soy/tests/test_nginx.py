@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
 from soy.nginx import Host
-#!/usr/bin/env python
-
-from soy.nginx import Host
 import nose
 from nose.tools import raises, ok_
 from mock import Mock, patch, PropertyMock
