@@ -23,13 +23,13 @@ class TestCreatePass:
 
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.retrn_value = True
+        jinja.return_value = True
         openfile = patch('__builtin__.open')
-        openfile.retrn_value = True
+        openfile.return_value = True
         prepare = patch('soy.utils.prepare')
-        prepare.retrn_value = True
+        prepare.return_value = True
         commit = patch('soy.utils.commit')
-        commit.retrn_value = True
+        commit.return_value = True
 
         self.vars = {
             'user': 'user',
@@ -75,13 +75,13 @@ class TestCreatePass:
 class TestCreateFail:
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.retrn_value = PropertyMock(side_effect=OSError)
+        jinja.return_value = PropertyMock(side_effect=OSError)
         openfile = patch('__builtin__.open')
-        openfile.retrn_value = PropertyMock(side_effect=OSError)
+        openfile.return_value = PropertyMock(side_effect=OSError)
         prepare = patch('soy.utils.prepare')
-        prepare.retrn_value = PropertyMock(side_effect=OSError)
+        prepare.return_value = PropertyMock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        prepare.retrn_value = PropertyMock(side_effect=OSError)
+        prepare.return_value = PropertyMock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -128,13 +128,13 @@ class TestDeleteFail:
 
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.retrn_value = PropertyMock(side_effect=OSError)
+        jinja.return_value = PropertyMock(side_effect=OSError)
         openfile = patch('__builtin__.open')
-        openfile.retrn_value = PropertyMock(side_effect=OSError)
+        openfile.return_value = PropertyMock(side_effect=OSError)
         prepare = patch('soy.utils.prepare')
-        prepare.retrn_value = PropertyMock(side_effect=OSError)
+        prepare.return_value = PropertyMock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        commit.retrn_value = PropertyMock(side_effect=OSError)
+        commit.return_value = PropertyMock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -173,20 +173,20 @@ class TestDeletePass:
 
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.retrn_value = True
+        jinja.return_value = True
         openfile = patch('__builtin__.open')
-        openfile.retrn_value = True
+        openfile.return_value = True
         prepare = patch('soy.utils.prepare')
-        prepare.retrn_value = True
+        prepare.return_value = True
         commit = patch('soy.utils.commit')
-        commit.retrn_value = True
-
+        commit.return_value = True
+        
         self.vars = {
             'user': 'user',
             'host': 'test.com'
         }
         self.__salt__ = {
-            'pillar.raw': Pillar_raw,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+            'pillar.raw': Pillar_raw,
             'file.remove': lambda x: True,
             'file.symlink': lambda x, y: True,
             'file.mkdir': lambda x: True,
