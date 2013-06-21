@@ -56,12 +56,12 @@ class TestCreatePass:
 
     def test_mkdir_pass(self):
         t = Host(self.__salt__, **self.vars)
-        rv = rv.mkdir('/tmp/')
+        rv = t.mkdir('/tmp/')
         ok_(rv == True, 'returned %s' % rv)
 
     def test_mklog_pass(self):
         t = Host(self.__salt__, **self.vars)
-        rv = rv.mklog('/tmp/')
+        rv = t.mklog('/tmp/')
         ok_(rv == True, 'returned %s' % rv)
 
     def test_create_pass(self):
