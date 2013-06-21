@@ -22,7 +22,7 @@ class TestPreparePass:
 class TestCommitFail:
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.side_effect = raise OSError
+        jinja.side_effect = PropertyMock(side_effect=OSError)
 
     def test_commit_fail(self):
         ret = soy.commit('/tmp/', '/tmp/', **{})
