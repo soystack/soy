@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 
-from soy.nginx import Host
 import nose
+from soy.nginx import Host
 from nose.tools import raises, ok_
-from mock import Mock, patch, PropertyMock
+from mock import Mock, patch
 
-Pillar_raw = lambda x: { 'enabled': '/tmp/',
-                         'available': '/tmp/',
-                         'base': '/tmp/',
-                         'template': '/tmp/test.file',
-                         'index': '/tmp/test.file',
-                         'indexhtml': 'test.html',
-                         'access': 'access.test',
-                         'error': 'error.test',
-                         'htdocs': '/tmp/',
-                         'logs': '/tmp/',
-                         'susconf': '/etc/nginx/suspended.conf.tpl',
-                         'sushtml': '/etc/nginx/suspended.html.tpl',
-                         'sushtdocs': '/var/www/suspended/htdocs/index.html' }
+Pillar_raw = lambda x: {'enabled': '/tmp/',
+                        'available': '/tmp/',
+                        'base': '/tmp/',
+                        'template': '/tmp/test.file',
+                        'index': '/tmp/test.file',
+                        'indexhtml': 'test.html',
+                        'access': 'access.test',
+                        'error': 'error.test',
+                        'htdocs': '/tmp/',
+                        'logs': '/tmp/',
+                        'susconf': '/etc/nginx/suspended.conf.tpl',
+                        'sushtml': '/etc/nginx/suspended.html.tpl',
+                        'sushtdocs': '/var/www/suspended/htdocs/index.html'}
+
 
 class TestCreatePass:
 
@@ -47,22 +48,22 @@ class TestCreatePass:
     def test_mkconf_pass(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mkconf()
-        ok_(rv == True, 'returned %s' % rv)
+        ok_(rv is True, 'returned %s' % rv)
 
     def test_mksource_fail(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mksource('/tmp/')
-        ok_(rv == True, 'returned %s' % rv)
+        ok_(rv is True, 'returned %s' % rv)
 
     def test_mkdir_pass(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mkdir('/tmp/')
-        ok_(rv == True, 'returned %s' % rv)
+        ok_(rv is True, 'returned %s' % rv)
 
     def test_mklog_pass(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mklog('/tmp/')
-        ok_(rv == True, 'returned %s' % rv)
+        ok_(rv is True, 'returned %s' % rv)
 
     def test_create_pass(self):
         t = Host(self.__salt__, **self.vars)
@@ -70,7 +71,8 @@ class TestCreatePass:
         t.mkdir = lambda x: True
         t.mklog = lambda x: True
         rv = t.create()
-        ok_(rv == True, 'returned %s' % rv)
+        ok_(rv is True, 'returned %s' % rv)
+
 
 class TestCreateFail:
     def setUp(self):
@@ -81,7 +83,7 @@ class TestCreateFail:
         prepare = patch('soy.utils.prepare')
         prepare.return_value = Mock(side_effect=OSError)
         commit = patch('soy.utils.commit')
-        prepare.return_value = Mock(side_effect=OSError)
+        commit.return_value = Mock(side_effect=OSError)
 
         self.vars = {
             'user': 'user',
@@ -99,22 +101,22 @@ class TestCreateFail:
     def test_mkconf_fail(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mkconf()
-        ok_(rv == False, 'returned %s' % rv)
+        ok_(rv is False, 'returned %s' % rv)
 
     @raises(OSError)
     def test_mksource_fail(self):
         t = Host(self.__salt__, **self.vars)
-        rv = t.mksource('/tmp/')
+        t.mksource('/tmp/')
 
     def test_mkdir_fail(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mkdir('/tmp/')
-        ok_(rv == False, 'returned %s' % rv)
+        ok_(rv is False, 'returned %s' % rv)
 
     def test_mklog_fail(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.mklog('/tmp/')
-        ok_(rv == False, 'returned %s' % rv)
+        ok_(rv is False, 'returned %s' % rv)
 
     def test_create_fail(self):
         t = Host(self.__salt__, **self.vars)
@@ -122,7 +124,8 @@ class TestCreateFail:
         t.mkdir = Mock(side_effect=OSError)
         t.mklog = Mock(side_effect=OSError)
         rv = t.create()
-        ok_(rv == False, 'returned %s' % rv)
+        ok_(rv is False, 'returned %s' % rv)
+
 
 class TestDeleteFail:
 
@@ -151,25 +154,26 @@ class TestDeleteFail:
 
     def test_delete_fail(self):
         t = Host(self.__salt__, **self.vars)
-        rv  = t.delete()
-        ok_(rv == False, 'returned %s' % rv)
+        rv = t.delete()
+        ok_(rv is False, 'returned %s' % rv)
 
     def test_suspend_fail(self):
         t = Host(self.__salt__, **self.vars)
-        rv  = t.suspend()
-        ok_(rv == False, 'returned %s' % rv)
+        rv = t.suspend()
+        ok_(rv is False, 'returned %s' % rv)
 
     def test_unsuspend_fail(self):
         t = Host(self.__salt__, **self.vars)
-        rv  = t.unsuspend()
-        ok_(rv == False, 'returned %s' % rv)
+        rv = t.unsuspend()
+        ok_(rv is False, 'returned %s' % rv)
 
     def test_delete_user(self):
         t = Host(self.__salt__, **self.vars)
         rv = t.delete(user=True)
-        ok_(rv == False, 'returned %s' % rv)
+        ok_(rv is False, 'returned %s' % rv)
 
-class TestDeletePass:
+
+class TestDeleteTrue:
 
     def setUp(self):
         jinja = patch('jinja2.Template')
@@ -193,17 +197,17 @@ class TestDeletePass:
             'nginx.signal': lambda x: True
         }
 
-    def test_delete_pass(self):
+    def test_delete_true(self):
         t = Host(self.__salt__, **self.vars)
-        rv  = t.delete()
-        ok_(rv == True, 'returned %s' % rv)
+        rv = t.delete()
+        ok_(rv is True, 'returned %s' % rv)
 
-    def test_suspend_pass(self):
+    def test_suspend_true(self):
         t = Host(self.__salt__, **self.vars)
-        rv  = t.suspend()
-        ok_(rv == True, 'returned %s' % rv)
+        rv = t.suspend()
+        ok_(rv is True, 'returned %s' % rv)
 
-    def test_unsuspend_fail(self):
+    def test_unsuspend_true(self):
         t = Host(self.__salt__, **self.vars)
-        rv  = t.unsuspend()
-        ok_(rv == True, 'returned %s' % rv)
+        rv = t.unsuspend()
+        ok_(rv is True, 'returned %s' % rv)

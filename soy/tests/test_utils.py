@@ -1,38 +1,37 @@
 #!/usr/bin/env python
 
-'''
-soy nginx function for rendering host configuration files.
-'''
-
-import nose
-from nose.tools import raises, ok_
 import soy.utils as soy
-from mock import patch, Mock, PropertyMock
+from nose.tools import ok_
+from mock import patch, Mock
 
-class TestPrepareFail:
-    def test_render_fail(self):
-        ret = soy.prepare(None,'/fake/')
-        ok_(ret == False, 'returned %s' % ret)
 
-class TestPreparePass:
-    def test_render_pass(self):
-        ret = soy.prepare(None,'/tmp/test.file')
-        ok_(ret == True, 'returned %s' % ret)
+class TestPrepareTrue:
+    def test_true(self):
+        rv = soy.prepare(None, '/fake/')
+        ok_(rv is False, 'returned %s' % rv)
 
-class TestCommitFail:
+
+class TestPrepareFalse:
+    def test_pass(self):
+        rv = soy.prepare(None, '/tmp/test.file')
+        ok_(rv is True, 'returned %s' % rv)
+
+
+class TestCommitFalse:
     def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.side_effect = PropertyMock(side_effect=OSError)
+        jinja.side_effect = Mock(side_effect=OSError)
 
-    def test_commit_fail(self):
-        ret = soy.commit('/tmp/', '/tmp/', **{})
-        ok_(ret == False, 'returned %s' % ret)
+    def test_fail(self):
+        rv = soy.commit('/tmp/', '/tmp/', **{})
+        ok_(rv is False, 'returned %s' % rv)
 
-class TestCommitPass:
+
+class TestCommitTrue:
     def setUp(self):
         jinja = patch('jinja2.Template')
         jinja.return_value = True
 
-    def test_commit_pass(self):
-        ret = soy.commit('/tmp/test', '/tmp/dsakfljhdalkfhdas', **{})
-        ok_(ret == True, 'returned %s' % ret)
+    def test_pass(self):
+        rv = soy.commit('/tmp/test.file', '/tmp/', **{})
+        ok_(rv == True, 'returned %s' % rv)

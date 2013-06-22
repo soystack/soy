@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+
 '''
 soy utilities class for rendering files.
 '''
 
 from jinja2 import Template
+
 
 def prepare(string, *args):
     '''
@@ -19,16 +21,17 @@ def prepare(string, *args):
     except (OSError, IOError):
         return False
 
+
 def commit(tmpl, path, **kwargs):
     '''
     render
     '''
     try:
         include = Template(open(tmpl, 'r+').read())
-        render  = include.render(**kwargs)
+        render = include.render(**kwargs)
         filehandle = open(path, 'wr+')
         filehandle.write("%s" % render)
         filehandle.close()
         return True
-    except Exception:
+    except (OSError, IOError):
         return False

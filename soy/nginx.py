@@ -6,6 +6,7 @@ soy nginx package for creating and deleting host configuration files.
 
 import soy.utils as soy
 
+
 class Host(object):
     '''
     init
@@ -21,8 +22,8 @@ class Host(object):
         write and symlink nginx host files from template.
         '''
         try:
-            available = '%s%s.conf'  % (self.pillar['available'], self.host)
-            enabled   = '%s%s.conf'  % (self.pillar['enabled'], self.host)
+            available = '%s%s.conf' % (self.pillar['available'], self.host)
+            enabled = '%s%s.conf' % (self.pillar['enabled'], self.host)
             soy.commit(self.pillar['template'], available, **self.__dict__)
             self.salt['file.symlink'](available, enabled)
             return True
@@ -60,7 +61,7 @@ class Host(object):
         try:
             self.salt['file.mkdir'](logdir)
             access = '%s%s' % (logdir, self.pillar['access'])
-            error  = '%s%s' % (logdir, self.pillar['error'])
+            error = '%s%s' % (logdir, self.pillar['error'])
             soy.prepare(None, access, error)
             return True
         except (OSError, IOError):
