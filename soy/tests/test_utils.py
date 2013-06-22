@@ -33,5 +33,5 @@ class TestCommitTrue:
         jinja.return_value = True
 
     def test_pass(self):
-        rv = soy.commit('/tmp/test.file', '/tmp/test.file', **{})
+        rv = soy.commit('/tmp/test', '/tmp/test', **{})
         ok_(rv == True, 'returned %s' % rv)
