@@ -5,32 +5,32 @@ from soy.nginx import Host
 from nose.tools import raises, ok_
 from mock import Mock, patch
 
-Pillar_raw = lambda x: {'enabled': '/tmp/',
-                        'available': '/tmp/',
-                        'base': '/tmp/',
-                        'template': '/tmp/test.file',
-                        'index': '/tmp/test.file',
-                        'indexhtml': 'test.html',
-                        'access': 'access.test',
-                        'error': 'error.test',
-                        'htdocs': '/tmp/',
-                        'logs': '/tmp/',
-                        'susconf': '/etc/nginx/suspended.conf.tpl',
-                        'sushtml': '/etc/nginx/suspended.html.tpl',
-                        'sushtdocs': '/var/www/suspended/htdocs/index.html'}
 
 
-class TestCreatePass:
+class Start:
+    def start(self, case):
+        Pillar_raw = lambda x: {'enabled': '/tmp/',
+                                'available': '/tmp/',
+                                'base': '/tmp/',
+                                'template': '/tmp/test.file',
+                                'index': '/tmp/test.file',
+                                'indexhtml': 'test.html',
+                                'access': 'access.test',
+                                'error': 'error.test',
+                                'htdocs': '/tmp/',
+                                'logs': '/tmp/',
+                                'susconf': '/etc/nginx/suspended.conf.tpl',
+                                'sushtml': '/etc/nginx/suspended.html.tpl',
+                                'sushtdocs': '/var/www/suspended/htdocs/index.html'}
 
-    def setUp(self):
         jinja = patch('jinja2.Template')
-        jinja.return_value = True
+        jinja.return_value = case
         openfile = patch('__builtin__.open')
-        openfile.return_value = True
+        openfile.return_value = case
         prepare = patch('soy.utils.prepare')
-        prepare.return_value = True
+        prepare.return_value = case
         commit = patch('soy.utils.commit')
-        commit.return_value = True
+        commit.return_value = case
 
         self.vars = {
             'user': 'user',
@@ -39,11 +39,16 @@ class TestCreatePass:
 
         self.__salt__ = {
             'pillar.raw': Pillar_raw,
-            'file.remove': lambda x: True,
-            'file.symlink': lambda x, y: True,
-            'file.mkdir': lambda x: True,
-            'nginx.signal': lambda x: True
+            'file.remove':  case,
+            'file.symlink': case,
+            'file.mkdir':   case,
+            'nginx.signal': case
         }
+
+
+class TestCreatePass(Start):
+    def setUp(self):
+        self.start(lambda *x: True)
 
     def test_mkconf_pass(self):
         t = Host(self.__salt__, **self.vars)
@@ -74,29 +79,9 @@ class TestCreatePass:
         ok_(rv is True, 'returned %s' % rv)
 
 
-class TestCreateFail:
+class TestCreateFail(Start):
     def setUp(self):
-        jinja = patch('jinja2.Template')
-        jinja.return_value = Mock(side_effect=OSError)
-        openfile = patch('__builtin__.open')
-        openfile.return_value = Mock(side_effect=OSError)
-        prepare = patch('soy.utils.prepare')
-        prepare.return_value = Mock(side_effect=OSError)
-        commit = patch('soy.utils.commit')
-        commit.return_value = Mock(side_effect=OSError)
-
-        self.vars = {
-            'user': 'user',
-            'host': 'test.com'
-        }
-
-        self.__salt__ = {
-            'pillar.raw': Pillar_raw,
-            'file.remove': Mock(side_effect=OSError),
-            'file.symlink': Mock(side_effect=OSError),
-            'file.mkdir': Mock(side_effect=OSError),
-            'nginx.signal': Mock(side_effect=OSError)
-        }
+        self.start(Mock(side_effect=OSError))
 
     def test_mkconf_fail(self):
         t = Host(self.__salt__, **self.vars)
@@ -127,30 +112,10 @@ class TestCreateFail:
         ok_(rv is False, 'returned %s' % rv)
 
 
-class TestDeleteFail:
+class TestDeleteFail(Start):
 
     def setUp(self):
-        jinja = patch('jinja2.Template')
-        jinja.return_value = Mock(side_effect=OSError)
-        openfile = patch('__builtin__.open')
-        openfile.return_value = Mock(side_effect=OSError)
-        prepare = patch('soy.utils.prepare')
-        prepare.return_value = Mock(side_effect=OSError)
-        commit = patch('soy.utils.commit')
-        commit.return_value = Mock(side_effect=OSError)
-
-        self.vars = {
-            'user': 'user',
-            'host': 'test.com'
-        }
-
-        self.__salt__ = {
-            'pillar.raw': Pillar_raw,
-            'file.remove': Mock(side_effect=OSError),
-            'file.symlink': Mock(side_effect=OSError),
-            'file.mkdir': Mock(side_effect=OSError),
-            'nginx.signal': Mock(side_effect=OSError)
-        }
+        self.start(Mock(side_effect=OSError))
 
     def test_delete_fail(self):
         t = Host(self.__salt__, **self.vars)
@@ -173,29 +138,10 @@ class TestDeleteFail:
         ok_(rv is False, 'returned %s' % rv)
 
 
-class TestDeleteTrue:
+class TestDeleteTrue(Start):
 
     def setUp(self):
-        jinja = patch('jinja2.Template')
-        jinja.return_value = True
-        openfile = patch('__builtin__.open')
-        openfile.return_value = True
-        prepare = patch('soy.utils.prepare')
-        prepare.return_value = True
-        commit = patch('soy.utils.commit')
-        commit.return_value = True
-
-        self.vars = {
-            'user': 'user',
-            'host': 'test.com'
-        }
-        self.__salt__ = {
-            'pillar.raw': Pillar_raw,
-            'file.remove': lambda x: True,
-            'file.symlink': lambda x, y: True,
-            'file.mkdir': lambda x: True,
-            'nginx.signal': lambda x: True
-        }
+        self.start(lambda *x: True)
 
     def test_delete_true(self):
         t = Host(self.__salt__, **self.vars)

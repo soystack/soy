@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 '''
-The following Host class provides several sane methods of interaction when         
-dealing with nginx from a virtualhost perspective. This perspective includes       
-user and administrative functionality. Some of these methods include create,       
-delete, suspend, and resume.
+soy nginx package for creating and deleting host configuration files.
 '''
 
 import soy.utils as soy
@@ -12,17 +9,17 @@ import soy.utils as soy
 
 class Host(object):
     '''
-    initalize Host class
+    init
     '''
     def __init__(self, __salt__, **kwargs):
         self.salt = __salt__
         self.pillar = self.salt['pillar.raw']('nginx')
-        for key, value in **kwargs:
-            self.[key] = value
+        self.host = kwargs['host']
+        self.user = kwargs['user']
 
     def mkconf(self):
         '''
-        write and symlink nginx host files from jinja2 template.
+        write and symlink nginx host files from template.
         '''
         try:
             available = '%s%s.conf' % (self.pillar['available'], self.host)
@@ -35,7 +32,7 @@ class Host(object):
 
     def mksource(self, htdocs):
         '''
-        write source html template (placeholder, not required)
+        write source html template (placeholders)
         '''
         try:
             path = '%s%s' % (htdocs, self.pillar['indexhtml'])
@@ -47,7 +44,7 @@ class Host(object):
 
     def mkdir(self, htdocs):
         '''
-        create host htdocs directory
+        create htdocs directory
         '''
         try:
             self.salt['file.mkdir'](htdocs)
@@ -72,20 +69,17 @@ class Host(object):
 
     def delete(self, user=False):
         '''
-        delete entire file tree for host and or user 
+        remove host tree
         '''
         try:
             enabled = '%s%s.conf' % (self.pillar['enabled'], self.host)
             available = '%s%s.conf' % (self.pillar['available'], self.host)
             base = '%s%s/' % (self.pillar['base'], self.user)
-
             if user is True:
-                self.salt['file.remove']('%S%S' % base, user)
-            else:
-                self.salt['file.remove'](available)
-                self.salt['file.remove'](enabled)
-                self.salt['file.remove']('%s%s' % (base, self.host))
-
+                self.salt['file.remove'](base)
+            self.salt['file.remove'](available)
+            self.salt['file.remove'](enabled)
+            self.salt['file.remove']('%s%s' % (base, self.host))
             self.salt['nginx.signal']('reload')
             return True
         except (OSError, IOError, KeyError):
@@ -93,7 +87,7 @@ class Host(object):
 
     def create(self):
         '''
-        build host tree for new hosts
+        build host tree
         '''
         root = '%s%s/%s' % (self.pillar['base'],
                             self.user,
@@ -110,9 +104,9 @@ class Host(object):
         except (OSError, IOError, KeyError, AttributeError):
             return self.delete()
 
-    def suspend(self, user=False):
+    def suspend(self):
         '''
-        suspend hosts 
+        suspend users and their hosts
         '''
         try:
             path = '%s%s.conf' % (self.pillar['available'], self.host)
@@ -126,9 +120,9 @@ class Host(object):
         except (OSError, IOError):
             return False
 
-    def resume(self):
+    def unsuspend(self):
         '''
-        resume normal operations on hosts that have been suspended
+        lift suspension
         '''
         try:
             path = '%s%s.conf' % (self.pillar['available'], self.host)
