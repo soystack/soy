@@ -1,0 +1,1 @@
+/nfsshare 192.168.122.42(rw,sync,no_root_squash)

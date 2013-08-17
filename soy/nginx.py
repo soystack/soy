@@ -8,9 +8,9 @@ import soy.utils as soy
 
 
 class Host(object):
-    '''
-    init
-    '''
+	'''
+	init
+	'''
     def __init__(self, __salt__, **kwargs):
         self.salt = __salt__
         self.pillar = self.salt['pillar.raw']('nginx')
@@ -18,9 +18,9 @@ class Host(object):
         self.user = kwargs['user']
 
     def mkconf(self):
-        '''
-        write and symlink nginx host files from template.
-        '''
+		'''
+		write and symlink nginx host files from template.
+		'''
         try:
             available = '%s%s.conf' % (self.pillar['available'], self.host)
             enabled = '%s%s.conf' % (self.pillar['enabled'], self.host)
@@ -35,7 +35,7 @@ class Host(object):
         write source html template (placeholders)
         '''
         try:
-            path = '%s%s' % (htdocs, self.pillar['indexhtml'])
+            path = '%s%s' % (htdocs, 'index.html')
             soy.commit(self.pillar['index'], path, **self.__dict__)
             self.salt['nginx.signal']('reload')
             return True
@@ -60,8 +60,8 @@ class Host(object):
         '''
         try:
             self.salt['file.mkdir'](logdir)
-            access = '%s%s' % (logdir, self.pillar['access'])
-            error = '%s%s' % (logdir, self.pillar['error'])
+            access = '%s%s' % (logdir, 'access.log')
+            error = '%s%s' % (logdir, 'error.log')
             soy.prepare(None, access, error)
             return True
         except (OSError, IOError):

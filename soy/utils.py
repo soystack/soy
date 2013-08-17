@@ -14,7 +14,7 @@ def prepare(string, *args):
     '''
     try:
         for item in args:
-            filehandle = open(item, 'wr+')
+            filehandle = open(item, 'w+')
             filehandle.write("%s" % string)
             filehandle.close()
         return True
@@ -27,9 +27,9 @@ def commit(tmpl, path, **kwargs):
     render
     '''
     try:
-        include = Template(open(tmpl, 'r+').read())
+        include = Template(open(tmpl, 'w+').read())
         render = include.render(**kwargs)
-        filehandle = open(path, 'wr+')
+        filehandle = open(path, 'w+')
         filehandle.write("%s" % render)
         filehandle.close()
         return True

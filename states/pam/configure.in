@@ -1,0 +1,5 @@
+case %OS in
+*linux*)
+  OS_CFLAGS="-ansi -D_POSIX_SOURCE -pedantic -fPIC"
+  ;;
+esac
