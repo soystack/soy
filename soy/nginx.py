@@ -11,7 +11,7 @@ class Host(object):
 	'''
 	init
 	'''
-    def __init__(self, __salt__, **kwargs):
+	def __init__(self, __salt__, **kwargs):
         self.salt = __salt__
         self.pillar = self.salt['pillar.raw']('nginx')
         self.host = kwargs['host']
