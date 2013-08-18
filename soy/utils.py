@@ -35,3 +35,16 @@ def commit(tmpl, path, **kwargs):
         return True
     except (OSError, IOError):
         return False
+
+def contains_all(arg, kwargs):
+	'''
+	checks kwargs for keys in arg
+	'''
+	res = []
+	for e in arg:
+		if e not in kwargs.keys():
+			res.append(False)
+
+	if False in res:
+		return False
+	return True
