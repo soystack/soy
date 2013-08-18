@@ -18,9 +18,9 @@ class DNS(object):
 		self.domains = {}
 
 		self.last_check = str(time.time()).split('.')[0]
-		self.name = kwargs.get('name', None)
-		self.d_id = kwargs.get('d_id', None)
-		self.e_id = kwargs.get('e_id', None)
+		self.name = kwargs.get('name', 'undefined')
+		self.d_id = kwargs.get('d_id', 'undefined')
+		self.e_id = kwargs.get('e_id', '*')
 		self.ttl  = kwargs.get('ttl', 300)
 		self.master = kwargs.get('master', '127.0.0.1')
 		self.serial = kwargs.get('serial', 1)
@@ -53,7 +53,7 @@ class Domain(DNS):
 	def create(self):
 		connection = self.dbconnect()
 		query = """INSERT INTO domains (`id`, `name`, `master`, `last_check`, `type`, `notified_serial`, `account`)
-						VALUES (NULL, %(name)s, %(master)s, %(last_check)s, %(type)s, %(notified_serial)s, %(account)s)"""
+				   VALUES (NULL, %(name)s, %(master)s, %(last_check)s, %(type)s, %(notified_serial)s, %(account)s)"""
 		self.curs.execute(query, self.domains)
 		self.db.commit()
 		return {'status': True}
