@@ -50,7 +50,7 @@ class DNS(object):
 			return {'error': e.code}
 
 class Domain(DNS):
-	def create_domain(self):
+	def create(self):
 		connection = self.dbconnect()
 		query = """INSERT INTO domains (`id`, `name`, `master`, `last_check`, `type`, `notified_serial`, `account`)
 						VALUES (NULL, %(name)s, %(master)s, %(last_check)s, %(type)s, %(notified_serial)s, %(account)s)"""
@@ -58,20 +58,20 @@ class Domain(DNS):
 		self.db.commit()
 		return {'status': True}
 
-	def report_domain(self):
+	def report(self):
 		connection = self.dbconnect()
 		query = """SELECT * FROM domains"""
 		self.db.query(query)
 		res = self.db.store_result()
 		return res.fetch_row(maxrows=0, how=1)
 
-	def search_domain(self):
+	def search(self):
 		connection = self.dbconnect()
 		query = """SELECT * FROM domains WHERE `name` REGEXP %s ORDER BY `name` DESC"""
 		self.curs.execute(query, (self.name,))
 		return self.curs.fetchall()
 
-	def update_domain_diff(self, defaults):
+	def update_diff(self, defaults):
 		changes = {}
 		for pos, field in enumerate(['id','name','master','last_check','type','notified_serial','account']):
 			if hasattr(self, field):
@@ -82,7 +82,7 @@ class Domain(DNS):
 
 		return changes
 
-	def update_domain(self):
+	def update(self):
 			connection = self.dbconnect()
 			query = """SELECT * FROM domains WHERE `name`=%s AND `id`=%s"""
 			self.curs.execute(query, (self.name, self.e_id,))
@@ -108,7 +108,7 @@ class Domain(DNS):
 		return {'status': True}
 
 class Record(DNS):
-	def create_record(self):
+	def create(self):
 		connection = self.dbconnect()
 		mail = 'mail.%s' % self.name
 		dns = 'dns.%s' % self.name
@@ -123,20 +123,20 @@ class Record(DNS):
 		self.db.commit()
 		return {'status': True}
 
-	def report_record(self):
+	def report(self):
 		connection = self.dbconnect()
 		query = """SELECT * FROM records"""
 		self.db.query(query)
 		res = self.db.store_result()
 		return res.fetch_row(maxrows=0, how=1)
 
-	def search_record(self):
+	def search(self):
 		connection = self.dbconnect()
 		query = """SELECT * FROM records WHERE `name` REGEXP %s ORDER BY `name` DESC"""
 		self.curs.execute(query, (self.name,))
 		return self.curs.fetchall()
 
-	def update_record_diff(self, defaults):
+	def update_diff(self, defaults):
 		changes = {}
 		for pos, field in enumerate(['id','name','master','last_check','type','notified_serial','account']):
 			if hasattr(self, field):
@@ -147,14 +147,14 @@ class Record(DNS):
 
 		return changes
 
-	def update_record(self):
+	def update(self):
 		connection = self.dbconnect()
 		query = """UPDATE records SET `name`=%s WHERE `id`=%s"""
 		self.curs.execute(query, (self.name, self.e_id,))
 		self.db.commit()
 		return {'status': True}
 
-	def delete_record(self):
+	def delete(self):
 		connection = self.dbconnect()
 		query = """DELETE FROM records WHERE `id`=%s"""
 		self.curs.execute(query, (self.e_id,))

@@ -7,30 +7,30 @@ class domain(object):
 		self.dns = Domain(__salt__, **kwargs)
 
 	def create(self):
-		return self.dns.create_domain()
+		return self.dns.create()
 
 	def report(self):
-		return self.dns.report_domain()
+		return self.dns.report()
 
 	def update(self):
-		return self.dns.update_domain()
+		return self.dns.update()
 
 	def delete(self):
-		return self.dns.delete_domain()
+		return self.dns.delete()
 
 class record(object):
 	def __init__(self, **kwargs):
 		self.dns = Record(__salt__, **kwargs)
 
-	def createRecord(self):
-		return self.dns.createRecord()
+	def create(self):
+		return self.dns.create()
 
-	def reportRecord(self):
-		return self.dns.reportRecord()
+	def report(self):
+		return self.dns.report()
 
-	def updateRecord(self):
-		return self.dns.updateRecord()
+	def update(self):
+		return self.dns.update()
 
-	def deleteRecord(self):
-		return self.dns.deleteRecord()
+	def delete(self):
+		return self.dns.delete()
 

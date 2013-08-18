@@ -23,7 +23,7 @@ def nginxcreate(user, host):
 @app.route('/nginx/report', methods=['GET'])
 def nginxreport():
 	user = 'nginx.localdomain'
-	return jsonify(c.cmd(user, 'soy_nginx.create', [])
+	return jsonify(c.cmd(user, 'soy_nginx.report', [])
 
 @app.route('/nginx/delete/<host>', methods=['GET'], defaults={'user': False})
 @app.route('/nginx/delete/<host>/<user>')
@@ -31,19 +31,19 @@ def nginxdelete(user, host):
 	user = 'nginx.localdomain'
 	opts = {'user': user,
 			'host': host}
-	return jsonify(c.cmd(user, 'soy_nginx.create', **opts)
+	return jsonify(c.cmd(user, 'soy_nginx.delete', **opts)
 
 @app.route('/nginx/suspend/<host>', methods=['GET'])
 def nginxsuspend(host):
 	user = 'nginx.localdomain'
 	opts = {'host': host}
-	return jsonify(c.cmd(user, 'soy_nginx.create', **opts)
+	return jsonify(c.cmd(user, 'soy_nginx.suspend', **opts)
 
 @app.route('/nginx/unsuspend/<host>', methods=['GET'])
 def nginxunsuspend(host):
 	user = 'nginx.localdomain'
 	opts = {'host': host}
-	return jsonify(c.cmd(user, 'soy_nginx.create', **opts)
+	return jsonify(c.cmd(user, 'soy_nginx.unsuspend', **opts)
 
 '''
 DNS
