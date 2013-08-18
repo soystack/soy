@@ -62,67 +62,74 @@ def dnsrecord():
 	return render_template('records.html')
 
 @app.route('/dns/create/domain/<name>')
-def dnscreate(name):
+def dnscreatedomain(name):
 	user = 'powerdns.com'
 	status = {}
-	status['domain'] = c.cmd(user, 'soy_pdns.createDomain', [name])
-	status['record'] = c.cmd(user, 'soy_pdns.createRecord', [name])
+	kwargs = {'name': name, 'func': 'create'}
+	status['domain'] = c.cmd(user, 'soy_pdns.start_domain', [kwargs])
+	status['record'] = c.cmd(user, 'soy_pdns.start_record', [kwargs])
 	return jsonify(status)
 
 @app.route('/dns/report/domain')
 def dnsreportdomain():
 	user = 'powerdns.com'
 	status = {}
-	report = c.cmd(user, 'soy_pdns.reportDomain')
+	kwargs = {'func': 'report'}
+	report = c.cmd(user, 'soy_pdns.report_domain', [kwargs])
 	for domain in report[user]:
 		status[domain['name']] = domain
 	return jsonify(status)
 
-@app.route('/dns/update/domain/<id>/<name>/<master>/<last_check>/<type>/<notified_serial>/<account>')
-def dnsupdatedomain(name, id, type, account, last_check, notified_serial, master):
+@app.route('/dns/update/domain/<e_id>/<name>/<master>/<last_check>/<e_type>/<notified_serial>/<account>')
+def dnsupdatedomain(name, e_id, e_type, account, last_check, notified_serial, master):
 	user = 'powerdns.com'
-	kwargs = {'name':name,
-			  'id':id,
-			  'type':type,
+	kwargs = {'func':'update',
+			  'name':name,
+			  'e_id':e_id,
+			  'e_type':e_type,
 			  'account':account,
 			  'last_check':last_check,
 			  'notified_serial':notified_serial,
 			  'master':master}
-	status = c.cmd(user, 'soy_pdns.updateDomain', **kwargs)
+	status = c.cmd(user, 'soy_pdns.updateDomain', [kwargs])
 	return jsonify(status)
 
-@app.route('/dns/delete/domain/<id>')
-def dnsdeletedomain(id):
+@app.route('/dns/delete/domain/<e_id>')
+def dnsdeletedomain(e_id):
 	user = 'powerdns.com'
-	status = c.cmd(user, 'soy_pdns.deleteDomain', [id])
+	kwargs = {'func': 'delete', 'e_id': e_id}
+	status = c.cmd(user, 'soy_pdns.deleteDomain', [kwargs])
 	return jsonify(status)
 
 @app.route('/dns/report/record')
 def dnsreportrecord():
 	user = 'powerdns.com'
 	status = {}
-	report = c.cmd(user, 'soy_pdns.reportRecord')
+	kwargs = {'func':'report'}
+	report = c.cmd(user, 'soy_pdns.reportRecord', [kwargs])
 	for domain in report[user]:
 		status[domain['id']] = domain
 	return jsonify(status)
 
-@app.route('/dns/update/record/<name>/<id>/<master>/<last_check>/<type>/<notified_serial>/<account>')
-def dnsupdaterecord(name, id, master, last_check, type, notified_serial, account):
+@app.route('/dns/update/record/<name>/<e_id>/<master>/<last_check>/<e_type>/<notified_serial>/<account>')
+def dnsupdaterecord(name, e_id, master, last_check, e_type, notified_serial, account):
 	user = 'powerdns.com'
-	kwargs = {'name':name,
-			  'id': id,
+	kwargs = {'func':'update',
+			  'name':name,
+			  'e_id': e_id,
 			  'master':master,
 			  'last_check':last_check,
-			  'type':type,
+			  'e_type':e_type,
 			  'notified_serial':notified_serial,
 			  'account':account}
-	status = c.cmd(user, 'soy_pdns.updateRecord', **kwargs)
+	status = c.cmd(user, 'soy_pdns.updateRecord', [kwargs])
 	return jsonify(status)
 
-@app.route('/dns/delete/record/<id>')
-def dnsdeleterecord(id):
+@app.route('/dns/delete/record/<e_id>')
+def dnsdeleterecord(e_id):
 	user = 'powerdns.com'
-	status = c.cmd(user, 'soy_pdns.deleteRecord', [id])
+	kwargs = {'func': 'delete', 'e_id':e_id}
+	status = c.cmd(user, 'soy_pdns.deleteRecord', [kwargs])
 	return jsonify(status)
 
 
