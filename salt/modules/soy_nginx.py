@@ -6,17 +6,13 @@ def report():
     return __salt__['pillar.raw']('nginx')
 
 def create(**kwargs):
-    ret = Host(__salt__,**kwargs)
-    return ret.create()
+    return Host(__salt__, **kwargs).create()
 
 def delete(**kwargs):
-    ret = Host(__salt__, **kwargs)
-    return ret.delete(user=False)
+	return Host(__salt__, **kwargs).delete()
 
 def suspend(**kwargs):
-    ret = Host(__salt__, **kwargs)
-    return ret.suspend()
+	return Host(__salt__, **kwargs).suspend()
 
 def unsuspend(**kwargs):
-    ret = Host(__salt__, **kwargs)
-    return ret.unsuspend()
+    return Host(__salt__, **kwargs).unsuspend()

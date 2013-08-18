@@ -2,44 +2,35 @@
 
 from soy.pdns import dns
 
-def createDomain(name):
-	kwargs = {'name': name}
-	cli = dns(__salt__, **kwargs)
-	return cli.createDomain()
+class domain(object):
+	def __init__(self, **kwargs):
+		self.dns = DNS(__salt__, **kwargs)
 
-def reportDomain():
-	kwargs = {}
-	cli = dns(__salt__, **kwargs)
-	return cli.reportDomain()
+	def create(self):
+		return self.dns.create_domain()
 
-def updateDomain(**kwargs):
-	cli = dns(__salt__, **kwargs)
-	return cli.updateDomain()
+	def report(self):
+		return self.dns.report_domain()
 
-def deleteDomain(id):
-	kwargs = {'id': id}
-	cli = dns(__salt__, **kwargs)
-	return cli.deleteDomain()
+	def update(self):
+		return self.dns.update_domain()
 
-def createRecord(**kwargs):
-	cli = dns(__salt__, **kwargs)
-	return cli.createRecord()
+	def delete(self):
+		return self.dns.delete_domain()
 
-def reportRecord():
-	kwargs = {}
-	cli = dns(__salt__, **kwargs)
-	return cli.reportRecord()
+class record(object):
+	def __init__(self, **kwargs):
+		self.dns = DNS(__salt__, **kwargs)
 
+	def createRecord(self):
+		return self.dns.createRecord()
 
-def updateRecord(name, id):
-	kwargs = {'name': name,
-			  'id': id}
-	cli = dns(__salt__, **kwargs)
-	return cli.updateRecord()
+	def reportRecord(self):
+		return self.dns.reportRecord()
 
+	def updateRecord(self):
+		return self.dns.updateRecord()
 
-def deleteRecord(id):
-	kwargs = {'id': id}
-	cli = dns(__salt__, **kwargs)
-	return cli.deleteRecord()
+	def deleteRecord(self):
+		return self.dns.deleteRecord()
 
