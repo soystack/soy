@@ -4,7 +4,7 @@ from soy.pdns import dns
 
 class domain(object):
 	def __init__(self, **kwargs):
-		self.dns = DNS(__salt__, **kwargs)
+		self.dns = Domain(__salt__, **kwargs)
 
 	def create(self):
 		return self.dns.create_domain()
@@ -20,7 +20,7 @@ class domain(object):
 
 class record(object):
 	def __init__(self, **kwargs):
-		self.dns = DNS(__salt__, **kwargs)
+		self.dns = Record(__salt__, **kwargs)
 
 	def createRecord(self):
 		return self.dns.createRecord()
