@@ -86,7 +86,7 @@ class dns:
 			self.query = """SELECT * FROM domains WHERE `name`=%s AND `id`=%s"""
 			self.curs.execute(self.query, (self.name, self.id,))
 			self.row = self.curs.fetchone()
-			self.defaults = self.updateDomainDiff(self.row)
+			self.defaults = self.update_domain_diff(self.row)
 			self.query = """UPDATE domains
 							SET `account`=%(account)s, 
 								`id`=%(id)s,
