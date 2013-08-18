@@ -4,7 +4,7 @@ import MySQLdb
 import time
 import soy.utils as soy
 
-class dns:
+class DNS(object):
 	def __init__(self, __salt__, **kwargs):
 		self.salt = __salt__
 		self.pillar = __salt__['pillar.raw']
@@ -49,25 +49,26 @@ class dns:
 		except Error, e:
 			return {'error': e.code}
 
+class Domain(DNS):
 	def create_domain(self):
 		connection = self.dbconnect()
-		self.query = """INSERT INTO domains (`id`, `name`, `master`, `last_check`, `type`, `notified_serial`, `account`)
+		query = """INSERT INTO domains (`id`, `name`, `master`, `last_check`, `type`, `notified_serial`, `account`)
 						VALUES (NULL, %(name)s, %(master)s, %(last_check)s, %(type)s, %(notified_serial)s, %(account)s)"""
-		self.curs.execute(self.query, self.domains)
+		self.curs.execute(query, self.domains)
 		self.db.commit()
 		return {'status': True}
 
 	def report_domain(self):
 		connection = self.dbconnect()
-		self.query = """SELECT * FROM domains"""
-		self.db.query(self.query)
-		self.res = self.db.store_result()
-		return self.res.fetch_row(maxrows=0, how=1)
+		query = """SELECT * FROM domains"""
+		self.db.query(query)
+		res = self.db.store_result()
+		return res.fetch_row(maxrows=0, how=1)
 
 	def search_domain(self):
 		connection = self.dbconnect()
-		self.query = """SELECT * FROM domains WHERE `name` REGEXP %s ORDER BY `name` DESC"""
-		self.curs.execute(self.query, (self.name,))
+		query = """SELECT * FROM domains WHERE `name` REGEXP %s ORDER BY `name` DESC"""
+		self.curs.execute(query, (self.name,))
 		return self.curs.fetchall()
 
 	def update_domain_diff(self, defaults):
@@ -83,11 +84,11 @@ class dns:
 
 	def update_domain(self):
 			connection = self.dbconnect()
-			self.query = """SELECT * FROM domains WHERE `name`=%s AND `id`=%s"""
-			self.curs.execute(self.query, (self.name, self.id,))
-			self.row = self.curs.fetchone()
-			self.defaults = self.update_domain_diff(self.row)
-			self.query = """UPDATE domains
+			query = """SELECT * FROM domains WHERE `name`=%s AND `id`=%s"""
+			self.curs.execute(query, (self.name, self.e_id,))
+			row = self.curs.fetchone()
+			defaults = self.update_domain_diff(row)
+			query = """UPDATE domains
 							SET `account`=%(account)s, 
 								`id`=%(id)s,
 								`last_check`=%(last_check)s,
@@ -95,43 +96,44 @@ class dns:
 								`name`=%(name)s,
 								`notified_serial`=%(notified_serial)s,
 								`type`=%(type)s  WHERE `id`=%(id)s"""
-			self.curs.execute(self.query, self.defaults)
+			self.curs.execute(query, defaults)
 			self.db.commit()
 			return {'status': True}
 
 	def delete_domain(self):
 		connection = self.dbconnect()
-		self.query = """DELETE FROM domains WHERE `id`=%s"""
-		self.curs.execute(self.query, (self.id,))
+		query = """DELETE FROM domains WHERE `id`=%s"""
+		self.curs.execute(query, (self.e_id,))
 		self.db.commit()
 		return {'status': True}
 
+class Record(DNS):
 	def create_record(self):
 		connection = self.dbconnect()
 		mail = 'mail.%s' % self.name
 		dns = 'dns.%s' % self.name
-		hm = 'hostmaster.%s' % self.name
+		host = 'hostmaster.%s' % self.name
 		
 		args = [(self.d_id, self.name, 'MX', mail, self.ttl, self.prio, self.last_check),
 				(self.d_id, mail, 'CNAME', self.name, self.ttl, self.prio, self.last_check),
-				(self.d_id, self.name, 'SOA', ". ".join([dns, hm]), self.ttl, self.prio, self.last_check)]
-		self.query = """INSERT INTO records (`id`, `domain_id`, `name`, `type`, `content`, `ttl`, `prio`, `change_date`, `ordername`, `auth`)
+				(self.d_id, self.name, 'SOA', ". ".join([dns, host]), self.ttl, self.prio, self.last_check)]
+		query = """INSERT INTO records (`id`, `domain_id`, `name`, `type`, `content`, `ttl`, `prio`, `change_date`, `ordername`, `auth`)
 						VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, NULL, NULL)"""
-		self.curs.executemany(self.query, args)
+		self.curs.executemany(query, args)
 		self.db.commit()
 		return {'status': True}
 
 	def report_record(self):
 		connection = self.dbconnect()
-		self.query = """SELECT * FROM records"""
-		self.db.query(self.query)
-		self.res = self.db.store_result()
-		return self.res.fetch_row(maxrows=0, how=1)
+		query = """SELECT * FROM records"""
+		self.db.query(query)
+		res = self.db.store_result()
+		return res.fetch_row(maxrows=0, how=1)
 
 	def search_record(self):
 		connection = self.dbconnect()
-		self.query = """SELECT * FROM records WHERE `name` REGEXP %s ORDER BY `name` DESC"""
-		self.curs.execute(self.query, (self.name,))
+		query = """SELECT * FROM records WHERE `name` REGEXP %s ORDER BY `name` DESC"""
+		self.curs.execute(query, (self.name,))
 		return self.curs.fetchall()
 
 	def update_record_diff(self, defaults):
@@ -147,33 +149,15 @@ class dns:
 
 	def update_record(self):
 		connection = self.dbconnect()
-		self.query = """UPDATE records SET `name`=%s WHERE `id`=%s"""
-		self.curs.execute(self.query, (self.name, self.id,))
+		query = """UPDATE records SET `name`=%s WHERE `id`=%s"""
+		self.curs.execute(query, (self.name, self.e_id,))
 		self.db.commit()
 		return {'status': True}
 
 	def delete_record(self):
 		connection = self.dbconnect()
-		self.query = """DELETE FROM records WHERE `id`=%s"""
-		self.curs.execute(self.query, (self.id,))
+		query = """DELETE FROM records WHERE `id`=%s"""
+		self.curs.execute(query, (self.e_id,))
 		self.db.commit()
 		return {'status': True}
 	
-	def update_domain(self):
-		connection = self.dbconnect()
-		self.query = """SELECT * FROM records WHERE `name`=%s AND `id`=%s"""
-		self.curs.execute(self.query, (self.name, self.id,))
-		self.row = self.curs.fetchone()
-		self.defaults = self.updateDomainDiff(self.row)
-		self.query = """UPDATE domains
-						SET `account`=%(account)s, 
-							`id`=%(id)s,
-							`last_check`=%(last_check)s,
-							`master`=%(master)s,
-							`name`=%(name)s,
-							`notified_serial`=%(notified_serial)s,
-							`type`=%(type)s  WHERE `id`=%(id)s"""
-		self.curs.execute(self.query, self.defaults)
-		self.db.commit()
-		return {'status': True}
-
