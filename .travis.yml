@@ -9,6 +9,7 @@ install:
     - "pip install coveralls --use-mirrors"
 before_script:
     - "touch /tmp/test"
+    - "sudo apt-get install -qq MySQLdb-python"
 script:
     - "nosetests --with-coverage --cover-package=soy"
 after_success: "coveralls"
