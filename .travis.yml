@@ -9,6 +9,8 @@ install:
     - "pip install coveralls --use-mirrors"
 before_script:
     - "touch /tmp/test"
+    - sudo apt-get install -qq libmysqlclient15-dev
+    - sudo apt-get install -qq python-dev
     - sudo apt-get install -qq python-MySQLdb
 script:
     - "nosetests --with-coverage --cover-package=soy"
