@@ -12,8 +12,10 @@ before_script:
     - "touch /tmp/test"
     - "sudo apt-get build-dep python-mysqldb"
     - "pip install MySQL-python"
-    - "sudo apt-get build-dep libdb libdb-dev"
-    - "sudo apt-get install libdb libdb-dev"
+    - "sudo apt-get build-dep libdb"
+    - "sudo apt-get install libdb"
+    - "sudo apt-get build-dep libdb-dev"
+    - "sudo apt-get install libdb-dev"
     - "pip install bsddb3"
 script:
     - "nosetests --with-coverage --cover-package=soy"
