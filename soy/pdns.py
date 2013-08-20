@@ -18,9 +18,9 @@ class DNS(object):
 		self.domains = {}
 
 		self.last_check = str(time.time()).split('.')[0]
-		self.name = kwargs.get('name', None)
-		self.d_id = kwargs.get('d_id', None)
-		self.e_id = kwargs.get('e_id', None)
+		self.name = kwargs.get('name', 'undefined')
+		self.d_id = kwargs.get('d_id', 'undefined')
+		self.e_id = kwargs.get('e_id', '*')
 		self.ttl  = kwargs.get('ttl', 300)
 		self.master = kwargs.get('master', '127.0.0.1')
 		self.serial = kwargs.get('serial', 1)
