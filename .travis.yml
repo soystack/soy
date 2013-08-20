@@ -16,7 +16,7 @@ before_script:
     - "sudo apt-get install python-bsddb3"
     - "sudo apt-get build-dep libdb4.8-dev"
     - "sudo apt-get install libdb4.8-dev"
-    - "sudo apt-get -- reinstall install python"
+    - "sudo apt-get --reinstall install python"
 
 script:
     - "nosetests --with-coverage --cover-package=soy"
