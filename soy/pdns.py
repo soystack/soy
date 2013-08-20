@@ -38,56 +38,69 @@ class DNS(object):
 		self.domains['account'] = self.account
 		self.domains['last_check'] = self.last_check
 
-		if self.ttl < 300:
-			self.ttl = 300
+		if self.ttl < 300: self.ttl = 300
 
 	def dbconnect(self):
 		try:
 			self.db = MySQLdb.connect(**self.mysql)
 			self.curs = self.db.cursor()
 			return {'status': True}
-		except Error, e:
-			return {'error': e.code}
+		except:
+			return {'status': False}
 
 class Domain(DNS):
 	def create(self):
-		connection = self.dbconnect()
-		query = """INSERT INTO domains (`id`, `name`, `master`, `last_check`, `type`, `notified_serial`, `account`)
-						VALUES (NULL, %(name)s, %(master)s, %(last_check)s, %(type)s, %(notified_serial)s, %(account)s)"""
-		self.curs.execute(query, self.domains)
-		self.db.commit()
-		return {'status': True}
+		try:
+			connection = self.dbconnect()
+			query = """INSERT INTO domains (`id`, `name`, `master`, `last_check`, `type`, `notified_serial`, `account`)
+					   VALUES (NULL, %(name)s, %(master)s, %(last_check)s, %(type)s, %(notified_serial)s, %(account)s)"""
+			self.curs.execute(query, self.domains)
+			self.db.commit()
+			return {'status': True}
+		except:
+			return {'status': False}
 
 	def report(self):
-		connection = self.dbconnect()
-		query = """SELECT * FROM domains"""
-		self.db.query(query)
-		res = self.db.store_result()
-		return res.fetch_row(maxrows=0, how=1)
+		try:
+			connection = self.dbconnect()
+			query = """SELECT * FROM domains"""
+			self.db.query(query)
+			res = self.db.store_result()
+			return res.fetch_row(maxrows=0, how=1)
+		except:
+			return {'status': False}
 
 	def search(self):
-		connection = self.dbconnect()
-		query = """SELECT * FROM domains WHERE `name` REGEXP %s ORDER BY `name` DESC"""
-		self.curs.execute(query, (self.name,))
-		return self.curs.fetchall()
+		try:
+			connection = self.dbconnect()
+			query = """SELECT * FROM domains WHERE `name` REGEXP %s ORDER BY `name` DESC"""
+			self.curs.execute(query, (self.name,))
+			return self.curs.fetchall()
+		except:
+			return {'status': False}
 
 	def update_diff(self, defaults):
-		changes = {}
-		for pos, field in enumerate(['id','name','master','last_check','type','notified_serial','account']):
-			if hasattr(self, field):
-				if defaults[pos] is not getattr(self, field):
-					changes[field] = getattr(self, field)
-			else:
-				changes[field] = defaults[pos]
-
-		return changes
+		try:
+			changes = {}
+			for pos, field in enumerate(
+					['id', 'name', 'master', 'last_check',
+					 'type','notified_serial','account']):
+				if hasattr(self, field):
+					if defaults[pos] is not getattr(self, field):
+						changes[field] = getattr(self, field)
+				else:
+					changes[field] = defaults[pos]
+			return changes
+		except:
+			return {'status': False}
 
 	def update(self):
+		try:
 			connection = self.dbconnect()
 			query = """SELECT * FROM domains WHERE `name`=%s AND `id`=%s"""
 			self.curs.execute(query, (self.name, self.e_id,))
 			row = self.curs.fetchone()
-			defaults = self.update_domain_diff(row)
+			defaults = self.update_diff(row)
 			query = """UPDATE domains
 							SET `account`=%(account)s, 
 								`id`=%(id)s,
@@ -99,65 +112,91 @@ class Domain(DNS):
 			self.curs.execute(query, defaults)
 			self.db.commit()
 			return {'status': True}
+		except:
+			return {'status': False}
 
-	def delete_domain(self):
-		connection = self.dbconnect()
-		query = """DELETE FROM domains WHERE `id`=%s"""
-		self.curs.execute(query, (self.e_id,))
-		self.db.commit()
-		return {'status': True}
+	def delete(self):
+		try:
+			connection = self.dbconnect()
+			query = """DELETE FROM domains WHERE `id`=%s"""
+			self.curs.execute(query, (self.e_id,))
+			self.db.commit()
+			return {'status': True}
+		except:
+			return {'status': False}
 
 class Record(DNS):
 	def create(self):
-		connection = self.dbconnect()
-		mail = 'mail.%s' % self.name
-		dns = 'dns.%s' % self.name
-		host = 'hostmaster.%s' % self.name
+		try:
+			connection = self.dbconnect()
+			mail = 'mail.%s' % self.name
+			dns = 'dns.%s' % self.name
+			host = 'hostmaster.%s' % self.name
 		
-		args = [(self.d_id, self.name, 'MX', mail, self.ttl, self.prio, self.last_check),
-				(self.d_id, mail, 'CNAME', self.name, self.ttl, self.prio, self.last_check),
-				(self.d_id, self.name, 'SOA', ". ".join([dns, host]), self.ttl, self.prio, self.last_check)]
-		query = """INSERT INTO records (`id`, `domain_id`, `name`, `type`, `content`, `ttl`, `prio`, `change_date`, `ordername`, `auth`)
-						VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, NULL, NULL)"""
-		self.curs.executemany(query, args)
-		self.db.commit()
-		return {'status': True}
+			args = [(self.d_id, self.name, 'MX', mail, self.ttl, self.prio, self.last_check),
+					(self.d_id, mail, 'CNAME', self.name, self.ttl, self.prio, self.last_check),
+					(self.d_id, self.name, 'SOA', ". ".join([dns, host]), self.ttl, self.prio, self.last_check)]
+			query = """INSERT INTO records (`id`, `domain_id`, `name`, `type`, `content`, `ttl`, `prio`, `change_date`, `ordername`, `auth`)
+					   VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, NULL, NULL)"""
+			self.curs.executemany(query, args)
+			self.db.commit()
+			return {'status': True}
+		except:
+			return {'status': False}
 
 	def report(self):
-		connection = self.dbconnect()
-		query = """SELECT * FROM records"""
-		self.db.query(query)
-		res = self.db.store_result()
-		return res.fetch_row(maxrows=0, how=1)
+		try:
+			connection = self.dbconnect()
+			query = """SELECT * FROM records"""
+			self.db.query(query)
+			res = self.db.store_result()
+			return res.fetch_row(maxrows=0, how=1)
+		except:
+			return {'status': False}
 
 	def search(self):
-		connection = self.dbconnect()
-		query = """SELECT * FROM records WHERE `name` REGEXP %s ORDER BY `name` DESC"""
-		self.curs.execute(query, (self.name,))
-		return self.curs.fetchall()
+		try:
+			connection = self.dbconnect()
+			query = """SELECT * FROM records WHERE `name` REGEXP %s ORDER BY `name` DESC"""
+			self.curs.execute(query, (self.name,))
+			return self.curs.fetchall()
+		except:
+			return {'status': False}
 
 	def update_diff(self, defaults):
-		changes = {}
-		for pos, field in enumerate(['id','name','master','last_check','type','notified_serial','account']):
-			if hasattr(self, field):
-				if defaults[pos] is not getattr(self, field):
-					changes[field] = getattr(self, field)
-			else:
-				changes[field] = defaults[pos]
+		try:
+			changes = {}
+			for pos, field in enumerate(
+					['id','domain_id', 'name', 'type',
+					 'content', 'ttl', 'prio', 'change_date',
+					 'ordername', 'auth']):
+				if hasattr(self, field):
+					if defaults[pos] is not getattr(self, field):
+						changes[field] = getattr(self, field)
+				else:
+					changes[field] = defaults[pos]
 
-		return changes
+			return changes
+		except:
+			return {'status': False}
 
 	def update(self):
-		connection = self.dbconnect()
-		query = """UPDATE records SET `name`=%s WHERE `id`=%s"""
-		self.curs.execute(query, (self.name, self.e_id,))
-		self.db.commit()
-		return {'status': True}
+		try:
+			connection = self.dbconnect()
+			query = """UPDATE records SET `name`=%s WHERE `id`=%s"""
+			self.curs.execute(query, (self.name, self.e_id,))
+			self.db.commit()
+			return {'status': True}
+		except:
+			return {'status': False}
 
 	def delete(self):
-		connection = self.dbconnect()
-		query = """DELETE FROM records WHERE `id`=%s"""
-		self.curs.execute(query, (self.e_id,))
-		self.db.commit()
-		return {'status': True}
+		try:
+			connection = self.dbconnect()
+			query = """DELETE FROM records WHERE `id`=%s"""
+			self.curs.execute(query, (self.e_id,))
+			self.db.commit()
+			return {'status': True}
+		except:
+			return {'status': False}
 	
