@@ -12,6 +12,7 @@ before_script:
     - "touch /tmp/test"
     - "sudo apt-get build-dep python-mysqldb"
     - "pip install MySQL-python"
+    - "sudo apt-get build-dep libdb libdb-dev"
     - "sudo apt-get install libdb libdb-dev"
     - "pip install bsddb3"
 script:
