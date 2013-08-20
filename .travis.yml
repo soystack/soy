@@ -19,4 +19,6 @@ before_script:
 
 script:
     - "nosetests --with-coverage --cover-package=soy"
-after_success: "coveralls"
+after_success:
+    - "coverage run --source=soy setup.py -q nosetests"
+    - "coveralls"
