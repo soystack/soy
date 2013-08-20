@@ -12,6 +12,8 @@ before_script:
     - "touch /tmp/test"
     - "sudo apt-get build-dep python-mysqldb"
     - "pip install MySQL-python"
+    - "sudo apt-get build-dep db4 db4-devel db4-utils"
+    - "pip install bsddb3"
 script:
     - "nosetests --with-coverage --cover-package=soy"
 after_success: "coveralls"
