@@ -12,8 +12,12 @@ before_script:
     - "touch /tmp/test"
     - "sudo apt-get build-dep python-mysqldb"
     - "pip install MySQL-python"
+    - "wget https://pypi.python.org/packages/source/b/bsddb3/bsddb3-5.3.0.tar.gz#md5=d5aa4f293c4ea755e84383537f74be82 --no-check-certificate"
+    - "tar -zxvf bsddb3-5.3.0.tar.gz"
+    - "cd bsddb3-5.3.0"
     - "sudo apt-get build-dep python-bsddb3"
     - "sudo apt-get install python-bsddb3"
+    - "find / | grep berkeley"
     - "pip install bsddb3"
 script:
     - "nosetests --with-coverage --cover-package=soy"
