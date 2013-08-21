@@ -27,7 +27,11 @@ class User(object):
 							  db.DB_HASH,
 							  db.DB_DIRTY_READ)
 
+		def _transfer_content(user, newuser):
+			self.salt['cmd.run']('cp -rf /home/vftp/%s/* /home/vftp/%s/' % (user, newuser))
+
 		self.connect = _connect
+		self.transfer_content = _transfer_content
 
 	def report(self):
 		'''
@@ -52,10 +56,17 @@ class User(object):
 		create new user
 		'''
 		try:
+			if self.newuser is 'undefined':
+				user = self.user
+				pswd = self.pswd
+			else:
+				user = self.newuser
+				pswd = self.newpswd
+
 			self.connect()
-			self.userdb.put(self.user, self.pswd)
+			self.userdb.put(user, pswd)
 			self.userdb.close()
-			self.salt['cmd.run']('mkdir -p /home/vftp/%s' % self.user)
+			self.salt['cmd.run']('mkdir -p /home/vftp/%s' % user)
 			return {'status': True}
 		except:
 			return {'status': False}
@@ -78,11 +89,8 @@ class User(object):
 		update user data
 		'''
 		try:
-			self.connect()
-			self.userdb.put(self.newuser, self.newpswd)
-			self.salt['cmd.run']('mkdir -p /home/vftp/%s' % self.newuser)
-			self.userdb.close()
-			self.salt['cmd.run']('cp -rf /home/vftp/%s/* /home/vftp/%s/' % (self.user, self.newuser))
+			self.create()
+			self.transfer_content(self.user, self.newuser)
 			self.delete()
 			return {'status': True}
 		except:
