@@ -76,6 +76,7 @@ class User(object):
 		update user data
 		'''
 		try:
+			self.connect()
 			self.create()
 			self.transfer_content(self.user, self.newuser)
 			self.delete()
