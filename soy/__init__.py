@@ -14,7 +14,7 @@ class init:
 		User(__salt__, **kwargs).create()
 
 	def report(self):
-		__salt__['pillar.raw']('nginx')
+		Host(__salt__, **kwargs).report()
 		Domain(__salt__, **kwargs).report()
 		Record(__salt__, **kwargs).report()
 		User(__salt__, **kwargs).report()

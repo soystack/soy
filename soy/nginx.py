@@ -5,6 +5,7 @@ soy nginx package for creating and deleting host configuration files.
 '''
 
 import soy.utils as soy
+from os import listdir
 
 
 class Host(object):
@@ -103,6 +104,20 @@ class Host(object):
 			return True
 		except (OSError, IOError, KeyError, AttributeError):
 			return self.delete()
+
+	def report(self):
+		'''
+		report domains owned by user
+		'''
+		try:
+			host = {}
+			user_root = '%s%s' % (self.pillar['base'], self.user)
+			for pos, host in enumerate(listdir(user_dir)):
+				hosts[self.user][pos] = host
+
+			return hosts
+		except:
+			return False
 
 	def suspend(self):
 		'''
