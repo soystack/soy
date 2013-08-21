@@ -33,24 +33,6 @@ class User(object):
 		self.connect = _connect
 		self.transfer_content = _transfer_content
 
-	def report(self):
-		'''
-		return a list of users
-		'''
-		try:
-			users = {}
-			self.connect()
-			cursor = self.userdb.cursor()
-			rec = cursor.first()
-			if isinstance(rec, tuple):
-				while rec:
-					users[rec[0]] = rec[1]
-					rec = cursor.next()
-			self.userdb.close()
-			return users
-		except:
-			return {'status': False}
-
 	def create(self):
 		'''
 		create new user
@@ -71,16 +53,21 @@ class User(object):
 		except:
 			return {'status': False}
 
-	def delete(self):
+	def report(self):
 		'''
-		delete user
+		return a list of users
 		'''
 		try:
+			users = {}
 			self.connect()
-			self.userdb.delete(self.user)
+			cursor = self.userdb.cursor()
+			rec = cursor.first()
+			if isinstance(rec, tuple):
+				while rec:
+					users[rec[0]] = rec[1]
+					rec = cursor.next()
 			self.userdb.close()
-			self.salt['file.remove']('/home/vftp/%s' % self.user)
-			return {'status': True}
+			return users
 		except:
 			return {'status': False}
 
@@ -95,3 +82,17 @@ class User(object):
 			return {'status': True}
 		except:
 			return {'status': False}
+
+	def delete(self):
+		'''
+		delete user
+		'''
+		try:
+			self.connect()
+			self.userdb.delete(self.user)
+			self.userdb.close()
+			self.salt['file.remove']('/home/vftp/%s' % self.user)
+			return {'status': True}
+		except:
+			return {'status': False}
+

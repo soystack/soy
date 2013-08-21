@@ -133,6 +133,33 @@ def dnsdeleterecord(e_id):
 	return jsonify(status)
 
 
+@app.route('/ftp/create/<user>/<pswd>')
+def ftpcreate(user, pswd):
+	user = 'vsftp.localdomain'
+	kwargs = {'user': user,
+			  'pswd': pswd}
+	return jsonify(c.cmd(user, 'soy_vsftp.create', [kwargs]))
+
+@app.route('/ftp/report')
+def ftpreport():
+	user = 'vsftp.localdomain'
+	kwargs = {}
+	return jsonify(c.cmd(user, 'soy_vsftp.report', [kwargs]))
+
+@app.route('/ftp/update/<user>/<newuser>/<newpswd>')
+def ftpupdate(user, newuser, newpswd):
+	user = 'vsftp.localdomain'
+	kwargs = {'user': user,
+			  'newuser': newuser,
+			  'newpswd': newpswd}
+	return jsonify(c.cmd(user, 'soy_vsftp.update', [kwargs]))
+
+@app.route('/ftp/delete/<user>')
+def ftpdelete(user):
+	user = 'vsftp.localdomain'
+	kwargs = {'user': user}
+	return jsonify(c.cmd(user, 'soy_vsftp.delete', [kwargs]))
+
 if __name__ == '__main__':
 	server = WSGIServer(('',80),app)
 	server.serve_forever()
