@@ -19,7 +19,7 @@ vsftpd:
     - enable: True
     - full_restart: True
     - watch:
-      - file: vsftpd
+      - cmd: install_lib
 
 magic_touch:
   cmd.run:
