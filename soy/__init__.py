@@ -5,33 +5,35 @@ from soy.nginx import Host
 from soy.vsftp import User
 
 class init:
-	def __init__(self):
+	def __init__(self, __salt__, **kwargs):
+		self.kwargs = kwargs
+		self.salt = __salt__
 
 	def create(self):
-		Host(__salt__, **kwargs).create()
-		Domain(__salt__, **kwargs).create()
-		Record(__salt__, **kwargs).create()
-		User(__salt__, **kwargs).create()
+		Host(self.salt, **self.kwargs).create()
+		Domain(self.salt, **self.kwargs).create()
+		Record(self.salt, **self.kwargs).create()
+		User(self.salt, **self.kwargs).create()
 
 	def report(self):
-		Host(__salt__, **kwargs).report()
-		Domain(__salt__, **kwargs).report()
-		Record(__salt__, **kwargs).report()
-		User(__salt__, **kwargs).report()
+		Host(self.salt, **self.kwargs).report()
+		Domain(self.salt, **self.kwargs).report()
+		Record(self.salt, **self.kwargs).report()
+		User(self.salt, **self.kwargs).report()
 
 	def update(self):
-		Domain(__salt__, **kwargs).update()
-		Record(__salt__, **kwargs).update()
-		User(__salt__, **kwargs).update()
+		Domain(self.salt, **self.kwargs).update()
+		Record(self.salt, **self.kwargs).update()
+		User(self.salt, **self.kwargs).update()
 
 	def delete(self):
-		Host(__salt__, **kwargs).delete()
-		Domain(__salt__, **kwargs).delete()
-		Record(__salt__, **kwargs).delete()
-		User(__salt__, **kwargs).delete()
+		Host(self.salt, **self.kwargs).delete()
+		Domain(self.salt, **self.kwargs).delete()
+		Record(self.salt, **self.kwargs).delete()
+		User(self.salt, **self.kwargs).delete()
 
 	def suspend_all(self):
-		Host(__salt__, **kwargs).suspend()
+		Host(self.salt, **self.kwargs).suspend()
 
 	def unsuspend_all(self):
-		Host(__salt__, **kwargs).unsuspend()
+		Host(self.salt, **self.kwargs).unsuspend()
