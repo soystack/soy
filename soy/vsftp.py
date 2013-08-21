@@ -68,7 +68,7 @@ class User(object):
 			self.connect()
 			self.userdb.delete(self.user)
 			self.userdb.close()
-			self.salt['file.makedirs']('/home/vftp/%s' % self.user)
+			self.salt['file.remove']('/home/vftp/%s' % self.user)
 			return {'status': True}
 		except:
 			return {'status': False}
