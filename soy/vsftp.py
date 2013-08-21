@@ -55,7 +55,7 @@ class User(object):
 			self.connect()
 			self.userdb.put(self.user, self.pswd)
 			self.userdb.close()
-			self.salt['file.makedirs']('/home/vftp/%s' % self.user)
+			self.salt['cmd.run']('mkdir -p /home/vftp/%s' % self.user)
 			return {'status': True}
 		except:
 			return {'status': False}
@@ -80,9 +80,9 @@ class User(object):
 		try:
 			self.connect()
 			self.userdb.put(self.newuser, self.newpswd)
+			self.salt['cmd.run']('mkdir -p /home/vftp/%s' % self.newuser)
 			self.userdb.close()
-			self.salt['file.copy']('/home/vftp/%s' % self.user,
-								   '/home/vftp/%s' % self.newuser)
+			self.salt['cmd.run']('cp -rf /home/vftp/%s/* /home/vftp/%s/' % (self.user, self.newuser))
 			self.delete()
 			return {'status': True}
 		except:

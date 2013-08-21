@@ -2,14 +2,14 @@
 
 from soy.vsftp import User
 
-def create(self):
+def create(kwargs):
 	return User(__salt__, **kwargs).create()
 
-def report(self):
+def report(kwargs):
 	return User(__salt__, **kwargs).report()
 
-def update(self):
+def update(kwargs):
 	return User(__salt__, **kwargs).update()
 
-def delete(self):
+def delete(kwargs):
 	return User(__salt__, **kwargs).delete()
