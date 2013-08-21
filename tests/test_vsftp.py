@@ -15,12 +15,30 @@ class TestUserPass:
 		t = User(**{}).create()
 		ok_(t['status'] is True, 't is %s' % t)
 
+	def test_delete(self, DB):
+		t = User(**{}).delete()
+		ok_(t['status'] is True, 't is %s' % t)
+	
+	def test_update(self, DB):
+		t = User(**{}).update()
+		ok_(t['status'] is True, 't is %s' % t)
+
+
 @patch('bsddb.db.DB', new_callable=OSError)
 class TestUserFail:
 	def test_report(self, DB):
 		t = User(**{}).report()
-		ok_('status' in t, 't is %s' % t)
+		ok_(t['status'] is False, 't is %s' % t)
 
 	def test_create(self, DB):
 		t = User(**{}).create()
 		ok_(t['status'] is False, 't is %s' % t)
+	
+	def test_delete(self, DB):
+		t = User(**{}).delete()
+		ok_(t['status'] is False, 't is %s' % t)
+
+	def test_update(self, DB):
+		t = User(**{}).update()
+		ok_(t['status'] is False, 't is %s' % t)
+

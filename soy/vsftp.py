@@ -11,9 +11,12 @@ class User(object):
 	'''
 	init
 	'''
-	def __init__(self, **kwargs):
+	def __init__(self, __salt__, **kwargs):
+		self.salt = __salt__
 		self.user = kwargs.get('user', 'undefined')
 		self.pswd = kwargs.get('pswd', 'undefined')
+		self.newuser = kwargs.get('newuser', 'undefined')
+		self.newpswd = kwargs.get('newpswd', 'undefined')
 
 		def _connect():
 			'''
@@ -51,7 +54,36 @@ class User(object):
 		try:
 			self.connect()
 			self.userdb.put(self.user, self.pswd)
-			self.userdb.close()	
+			self.userdb.close()
+			self.salt['file.makedirs']('/home/vftp/%s' % self.user)
+			return {'status': True}
+		except:
+			return {'status': False}
+
+	def delete(self):
+		'''
+		delete user
+		'''
+		try:
+			self.connect()
+			self.userdb.delete(self.user)
+			self.userdb.close()
+			self.salt['file.makedirs']('/home/vftp/%s' % self.user)
+			return {'status': True}
+		except:
+			return {'status': False}
+
+	def update(self):
+		'''
+		update user data
+		'''
+		try:
+			self.connect()
+			self.userdb.put(self.newuser, self.newpswd)
+			self.userdb.close()
+			self.salt['file.copy']('/home/vftp/%s' % self.user,
+								   '/home/vftp/%s' % self.newuser)
+			self.delete()
 			return {'status': True}
 		except:
 			return {'status': False}
