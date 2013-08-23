@@ -45,7 +45,7 @@ postfix:
   smtpd_tls_security_level: may
   smtpd_tls_loglevel: 1
   smtpd_tls_received_header: yes
-  smtpd_tls_session_cache_timeout: 3600s
+  smtpd_tls_session_cache_timeout: "3600s"
   tls_random_source: "dev:/dev/urandom"
   smtp_tls_session_cache_database: "btree:$data_directory/smtp_tls_session_cache"
   # Change mail.example.com.* to your host name 
