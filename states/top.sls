@@ -22,9 +22,9 @@ base:
   vsftp:
     - match: nodegroup
     - vsftpd
-  p3plpop09-v01.prod.phx3.secureserver.net:
+  mail:
     - match: nodegroup
-    - postfix
+    - dovecot
   nfs-server:
     - match: nodegroup
     - nfs-server
