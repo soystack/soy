@@ -183,8 +183,22 @@ class Record(DNS):
 	def update(self):
 		try:
 			connection = self.dbconnect()
-			query = """UPDATE records SET `name`=%s WHERE `id`=%s"""
+			query = """SELECT * FROM domains WHERE `name`=%s AND `id`=%s"""
 			self.curs.execute(query, (self.name, self.e_id,))
+			row = self.curs.fetchone()
+			defaults = self.update_diff(row)
+			query = """UPDATE domains
+							SET `id`=%(account)s,
+								`domain_id`=%(id)s,
+								`name`=%(last_check)s,
+								`type`=%(master)s,
+								`content`=%(name)s,
+								`ttl`=%(notified_serial)s,
+								`prio`=%(type)s,
+								`change_date`=(change_date)s,
+								`ordername`=%(ordername)s,
+								`auth`=%(auth)s WHERE `id`=%(id)s"""
+			self.curs.execute(query, defaults)
 			self.db.commit()
 			return {'status': True}
 		except:
