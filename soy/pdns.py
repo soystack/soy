@@ -102,13 +102,13 @@ class Domain(DNS):
 			row = self.curs.fetchone()
 			defaults = self.update_diff(row)
 			query = """UPDATE domains
-							SET `account`=%(account)s, 
-								`id`=%(id)s,
-								`last_check`=%(last_check)s,
-								`master`=%(master)s,
-								`name`=%(name)s,
-								`notified_serial`=%(notified_serial)s,
-								`type`=%(type)s  WHERE `id`=%(id)s"""
+					   SET `account`=%(account)s, 
+					   `id`=%(id)s,
+					   `last_check`=%(last_check)s,
+					   `master`=%(master)s,
+					   `name`=%(name)s,
+					   `notified_serial`=%(notified_serial)s,
+					   `type`=%(type)s  WHERE `id`=%(id)s"""
 			self.curs.execute(query, defaults)
 			self.db.commit()
 			return {'status': True}
@@ -188,16 +188,16 @@ class Record(DNS):
 			row = self.curs.fetchone()
 			defaults = self.update_diff(row)
 			query = """UPDATE domains
-							SET `id`=%(account)s,
-								`domain_id`=%(id)s,
-								`name`=%(last_check)s,
-								`type`=%(master)s,
-								`content`=%(name)s,
-								`ttl`=%(notified_serial)s,
-								`prio`=%(type)s,
-								`change_date`=(change_date)s,
-								`ordername`=%(ordername)s,
-								`auth`=%(auth)s WHERE `id`=%(id)s"""
+					   SET `id`=%(account)s,
+					   `domain_id`=%(id)s,
+					   `name`=%(last_check)s,
+					   `type`=%(master)s,
+					   `content`=%(name)s,
+					   `ttl`=%(notified_serial)s,
+					   `prio`=%(type)s,
+					   `change_date`=(change_date)s,
+					   `ordername`=%(ordername)s,
+					   `auth`=%(auth)s WHERE `id`=%(id)s"""
 			self.curs.execute(query, defaults)
 			self.db.commit()
 			return {'status': True}
