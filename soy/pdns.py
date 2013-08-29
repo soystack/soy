@@ -16,6 +16,15 @@ class DNS(object):
 			'db': self.pillar('pdns-master')['db']}
 
 		self.domains = {}
+		
+		'''
+		kwargsExample = {'name': 'undefined',
+				 		 'd_id': 'undefined',
+				 		 'e_id': '*'}
+				 
+		for key, value in kwargs.iteritems():
+			setattr(self, key, kwargsExample.get(key, value))
+		'''
 
 		self.last_check = str(time.time()).split('.')[0]
 		self.name = kwargs.get('name', 'undefined')
