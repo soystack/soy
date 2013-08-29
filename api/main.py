@@ -25,6 +25,13 @@ def nginxreport():
 	user = 'nginx.localdomain'
 	return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'report', {}])
 
+@app.route('/nginx/update/<host>/<updated_host>', methods=['PUT'])
+def nginxupdate(host, updated_host):
+	user = 'nginx.localdomain'
+	opts = {'host': host,
+		'updated_host': updated_host}
+	return jsonify(user, 'soy_router.route', ['nginx','Host', 'update', opts])
+
 @app.route('/nginx/delete/<host>', methods=['GET'], defaults={'user': False})
 @app.route('/nginx/delete/<host>/<user>')
 def nginxdelete(user, host):
