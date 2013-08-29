@@ -17,6 +17,7 @@ class Host(object):
 		self.pillar = self.salt['pillar.raw']('nginx')
 		self.host = kwargs['host']
 		self.user = kwargs['user']
+		self.updated_host = kwargs['updated_host']
 
 	def mkconf(self):
 		'''
@@ -119,6 +120,17 @@ class Host(object):
 		except:
 			return False
 
+	def update(self):
+		'''
+		update domains owned by user
+		'''
+		try:
+			user_root = '%s%s' % (self.pillar['base'], self.user)
+			old_domain = '%s%s' % (user_root, 
+			self.salt['file.rename'](self.host, self.updated_host)
+			return {'status': True}
+		except:
+			return {'status': False}
 	def suspend(self):
 		'''
 		suspend users and their hosts
