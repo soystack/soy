@@ -126,8 +126,9 @@ class Host(object):
 		'''
 		try:
 			user_root = '%s%s' % (self.pillar['base'], self.user)
-			old_domain = '%s%s' % (user_root, 
-			self.salt['file.rename'](self.host, self.updated_host)
+			old_domain = '%s%s' % (user_root, self.host)
+			new_domain = '%s%s' % (user_root, self.updated_host)
+			self.salt['file.rename'](old_domain, new_domain)
 			return {'status': True}
 		except:
 			return {'status': False}
