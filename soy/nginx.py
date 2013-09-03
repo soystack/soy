@@ -15,9 +15,13 @@ class Host(object):
 	def __init__(self, __salt__, **kwargs):
 		self.salt = __salt__
 		self.pillar = self.salt['pillar.raw']('nginx')
+		'''
 		self.host = kwargs['host']
 		self.user = kwargs['user']
 		self.updated_host = kwargs['updated_host']
+		'''
+		for k, v in kwargs.iteritems():
+			setattr(self, k, kwargs.get(v, 'undefined'))
 
 	def mkconf(self):
 		'''
