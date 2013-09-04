@@ -32,14 +32,14 @@ class Domain(DNS):
             return {'status': False}
 
 	def report(self):
-	    try:
-        	connection = self.dbconnect()
-        	query = """SELECT * FROM domains"""
-        	self.db.query(query)
-        	res = self.db.store_result()
-        	return res.fetch_row(maxrows=0, how=1)
-    	except:
-	        return {'status': False}
+		try:
+			connection = self.dbconnect()
+			query = """SELECT * FROM domains"""
+			self.db.query(query)
+			res = self.db.store_result()
+			return res.fetch_row(maxrows=0, how=1)
+		except:
+			return {'status': False}
 
     def search(self):
         try:
