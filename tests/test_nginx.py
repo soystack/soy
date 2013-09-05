@@ -69,6 +69,16 @@ class TestCreatePass(Start):
         t = Host(self.__salt__, **self.vars)
         rv = t.mklog('/tmp/')
         ok_(rv is True, 'returned %s' % rv)
+        
+	def test_update_pass(self):
+		t = Host(self.__salt__, **self.vars)
+		rv = t.update()
+		ok_(rv is True, 'returned %s' % rv)
+		
+	def test_report_pass(self):
+		t = Host(self.__salt__, **self.vars)
+		rv = t.report()
+		ok_(rv is True, 'returned %s' % rv)
 
     def test_create_pass(self):
         t = Host(self.__salt__, **self.vars)
@@ -102,6 +112,16 @@ class TestCreateFail(Start):
         t = Host(self.__salt__, **self.vars)
         rv = t.mklog('/tmp/')
         ok_(rv is False, 'returned %s' % rv)
+
+	def test_update_fail(self):
+		t = Host(self.__salt__, **self.vars)
+		rv = t.update()
+		ok_(rv is False, 'returned %s' % rv)
+
+	def test_report_fail(self):
+		t = Host(self.__salt__, ** self.vars)
+		rv = t.report()
+		ok_(rv is False, 'returned %s' % rv)
 
     def test_create_fail(self):
         t = Host(self.__salt__, **self.vars)
