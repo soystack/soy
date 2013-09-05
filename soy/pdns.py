@@ -13,6 +13,11 @@ class DNS(object):
 
 	for k, v in kwargs.iteritems():
 		setattr(self, k, kwargs.get(v, 'undefined'))
+		
+	"""
+	for k, v in kwargs.iteritems():
+		self.pillar[k] = v
+	"""
 
     def dbconnect(self):
         try:
@@ -125,6 +130,14 @@ class Record(DNS):
 			self.curs.execute(query, (self.name, self.e_id,))
 			row = self.curs.fetchone()
 			defaults = self.update_diff(row)
+			"""
+			# A Proposal
+			for k, v in self.pillar.iteritems():
+				query = """UPDATE domains SET `%s`=%(%s)s WHERE `id`=%(id)s""" % (k,v)
+				self.curs.execute(query, self.pillar)
+				self.db.commit()
+			return {'status': True}
+			"""
 			query = """UPDATE domains
 					   SET `id`=%(account)s,
 					   `domain_id`=%(id)s,
