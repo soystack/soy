@@ -11,6 +11,9 @@ class DNS(object):
             'passwd' : __salt__['pillar.raw']('mysql.pass'),
             'db'     : __salt__['pillar.raw']('pdns-master')['db']}
 
+	for k, v in kwargs.iteritems():
+		setattr(self, k, kwargs.get(v, 'undefined'))
+
     def dbconnect(self):
         try:
             self.db = MySQLdb.connect(**self.mysql)
@@ -61,7 +64,7 @@ class Domain(DNS):
                            `name`=%(name)s,
                            `notified_serial`=%(notified_serial)s,
                            `type`=%(type)s  WHERE `id`=%(id)s"""
-            self.curs.execute(query, defaults)
+            self.curs.execute(query, self)
             self.db.commit()
             return {'status': True}
         except:
@@ -133,7 +136,7 @@ class Record(DNS):
 					   `change_date`=(change_date)s,
 					   `ordername`=%(ordername)s,
 					   `auth`=%(auth)s WHERE `id`=%(id)s"""
-			self.curs.execute(query, defaults)
+			self.curs.execute(query, self)
 			self.db.commit()
 			return {'status': True}
 		except:
