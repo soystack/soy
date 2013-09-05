@@ -115,23 +115,6 @@ class Record(DNS):
 		except:
 			return {'status': False}
 
-	def update_diff(self, defaults):
-		try:
-			changes = {}
-			for pos, field in enumerate(
-					['id','domain_id', 'name', 'type',
-					 'content', 'ttl', 'prio', 'change_date',
-					 'ordername', 'auth']):
-				if hasattr(self, field):
-					if defaults[pos] is not getattr(self, field):
-						changes[field] = getattr(self, field)
-				else:
-					changes[field] = defaults[pos]
-
-			return changes
-		except:
-			return {'status': False}
-
 	def update(self):
 		try:
 			connection = self.dbconnect()
