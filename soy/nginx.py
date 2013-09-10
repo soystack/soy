@@ -136,6 +136,7 @@ class Host(object):
 			return {'status': True}
 		except:
 			return {'status': False}
+
 	def suspend(self):
 		'''
 		suspend users and their hosts

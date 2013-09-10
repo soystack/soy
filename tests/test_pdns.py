@@ -5,7 +5,16 @@ from soy.pdns import DNS, Domain, Record
 from nose.tools import raises, ok_
 from mock import Mock, patch, MagicMock
 
-def raise_(*x):
+defaults = {
+	'name': 'undefined',
+	'e_id': 'undefined',
+	'd_id': 'undefined',
+	'ttl': 'undefined',
+	'prio': 'undefined',
+	'last_check': 'undefined'
+}
+
+def raise_(**defaultsx):
 	raise Exception
 
 class Start:
@@ -23,7 +32,7 @@ class TestDNSPass(Start):
 		self.start()
 
 	def test_dbconnect(self, connect):
-		t = DNS(self.__salt__, **{}).dbconnect()
+		t = DNS(self.__salt__, **defaults).dbconnect()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 @patch('MySQLdb.connect')
@@ -32,28 +41,23 @@ class TestDomainPass(Start):
 		self.start()
 
 	def test_create(self, connect):
-		t = Domain(self.__salt__, **{}).create()
+		t = Domain(self.__salt__, **defaults).create()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 	def test_report(self, connect):
-		t = Domain(self.__salt__, **{}).report()
+		t = Domain(self.__salt__, **defaults).report()
 		ok_('status' not in t, 'returned %s' % t.get('status', 'error'))
 	
 	def test_search(self, connect):
-		t = Domain(self.__salt__, **{}).search()
-		ok_('status' not in t, 'returned %s' % t.get('status', 'error'))
-
-	def test_update_diff(self, connect):
-		t = MagicMock()
-		t = Domain(self.__salt__, **{}).update_diff(bytearray(7))
+		t = Domain(self.__salt__, **defaults).search()
 		ok_('status' not in t, 'returned %s' % t.get('status', 'error'))
 
 	def test_update(self, connect):
-		t = Domain(self.__salt__, **{}).update()
+		t = Domain(self.__salt__, **defaults).update()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 	def test_delete(self, connect):
-		t = Domain(self.__salt__, **{}).delete()
+		t = Domain(self.__salt__, **defaults).delete()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 @patch('MySQLdb.connect')
@@ -62,28 +66,23 @@ class TestRecordPass(Start):
 		self.start()
 
 	def test_create(self, connect):
-		t = Record(self.__salt__, **{}).create()
+		t = Record(self.__salt__, **defaults).create()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 	def test_report(self, connect):
-		t = Record(self.__salt__, **{}).report()
+		t = Record(self.__salt__, **defaults).report()
 		ok_('status' not in t, 'returned %s' % t.get('status', 'error'))
 	
 	def test_search(self, connect):
-		t = Record(self.__salt__, **{}).search()
-		ok_('status' not in t, 'returned %s' % t.get('status', 'error'))
-
-	def test_update_diff(self, connect):
-		t = MagicMock()
-		t = Record(self.__salt__, **{}).update_diff(bytearray(10))
+		t = Record(self.__salt__, **defaults).search()
 		ok_('status' not in t, 'returned %s' % t.get('status', 'error'))
 
 	def test_update(self, connect):
-		t = Record(self.__salt__, **{}).update()
+		t = Record(self.__salt__, **defaults).update()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 	def test_delete(self, connect):
-		t = Record(self.__salt__, **{}).delete()
+		t = Record(self.__salt__, **defaults).delete()
 		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 @patch('MySQLdb.connect', new_callable=OSError)
@@ -92,30 +91,23 @@ class TestDomainFail(Start):
 		self.start()
 
 	def test_create(self, connect):
-		t = Domain(self.__salt__, **{}).create()
+		t = Domain(self.__salt__, **defaults).create()
 		ok_(t['status'] is False, 'returned %s' % t['status'])
 
 	def test_report(self, connect):
-		t = Domain(self.__salt__, **{}).report()
+		t = Domain(self.__salt__, **defaults).report()
 		ok_('status' in t, 'returned %s' % t.get('status', 'error'))
 	
 	def test_search(self, connect):
-		t = Domain(self.__salt__, **{}).search()
-		ok_('status' in t, 'returned %s' % t.get('status', 'error'))
-
-	@patch('__builtin__.hasattr', return_value=raise_)
-	def test_update_diff(self, connect, ignore):
-		t = MagicMock()
-		for attr in dir(t): del attr
-		t = Domain(self.__salt__, **{}).update_diff(bytearray(7))
+		t = Domain(self.__salt__, **defaults).search()
 		ok_('status' in t, 'returned %s' % t.get('status', 'error'))
 
 	def test_update(self, connect):
-		t = Domain(self.__salt__, **{}).update()
+		t = Domain(self.__salt__, **defaults).update()
 		ok_(t['status'] is False, 'returned %s' % t['status'])
 
 	def test_delete(self, connect):
-		t = Domain(self.__salt__, **{}).delete()
+		t = Domain(self.__salt__, **defaults).delete()
 		ok_(t['status'] is False, 'returned %s' % t['status'])
 
 @patch('MySQLdb.connect', new_callable=OSError)
@@ -124,28 +116,22 @@ class TestRecordFail(Start):
 		self.start(patch('MySQLdb.connect', new_callable=OSError))
 
 	def test_create(self, connect):
-		t = Record(self.__salt__, **{}).create()
+		t = Record(self.__salt__, **defaults).create()
 		ok_(t['status'] is False, 'returned %s' % t['status'])
 
 	def test_report(self, connect):
-		t = Record(self.__salt__, **{}).report()
+		t = Record(self.__salt__, **defaults).report()
 		ok_('status' in t, 'returned %s' % t.get('status', 'error'))
 	
 	def test_search(self, connect):
-		t = Record(self.__salt__, **{}).search()
-		ok_('status' in t, 'returned %s' % t.get('status', 'error'))
-
-	@patch('__builtin__.hasattr', return_value=raise_)
-	def test_update_diff(self, connect, ignore):
-		t = MagicMock()
-		t = Record(self.__salt__, **{}).update_diff(bytearray(10))
+		t = Record(self.__salt__, **defaults).search()
 		ok_('status' in t, 'returned %s' % t.get('status', 'error'))
 
 	def test_update(self, connect):
-		t = Record(self.__salt__, **{}).update()
+		t = Record(self.__salt__, **defaults).update()
 		ok_(t['status'] is False, 'returned %s' % t['status'])
 
 	def test_delete(self, connect):
-		t = Record(self.__salt__, **{}).delete()
+		t = Record(self.__salt__, **defaults).delete()
 		ok_(t['status'] is False, 'returned %s' % t['status'])
 
