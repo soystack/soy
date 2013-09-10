@@ -118,7 +118,10 @@ class Host(object):
 			host = {}
 			user_root = '%s%s' % (self.pillar['base'], self.user)
 			for pos, host in enumerate(listdir(user_dir)):
-				hosts[self.user][pos] = host
+				try:
+					hosts[self.user][pos] = host
+				except:
+					return False
 
 			return hosts
 		except:
