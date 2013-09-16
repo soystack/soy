@@ -16,9 +16,8 @@ class DNS(object):
         try:
             self.db = MySQLdb.connect(**self.mysql)
             self.curs = self.db.cursor()
-            return {'status': True}
         except:
-            return {'status': False}
+            return None
 
 class Domain(DNS):
     def create(self):
