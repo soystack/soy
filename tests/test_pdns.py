@@ -26,14 +26,6 @@ class Start:
 
 		self.__salt__ = {'pillar.raw': pillar_raw}
 
-@patch('MySQLdb.connect')
-class TestDNSPass(Start):
-	def setUp(self):
-		self.start()
-
-	def test_dbconnect(self, connect):
-		t = DNS(self.__salt__, **defaults).dbconnect()
-		ok_(t['status'] is True, 'returned %s' % t['status'])
 
 @patch('MySQLdb.connect')
 class TestDomainPass(Start):
