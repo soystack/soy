@@ -143,8 +143,7 @@ class Record(DNS):
                                      `change_date`=%(change_date)s,
                                      `ordername`=%(ordername)s,
                                      `auth`=%(auth)s
-                                 WHERE `id`=%(id)s"""
-            self.curs.execute(query, self)
+                                 WHERE `id`=%(id)s""", self)
             self.db.commit()
             return {'status': True}
         except:
