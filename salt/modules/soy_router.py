@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 
-import soy
+from soy import *
+
+def call(p, c, **kwargs):
+	c = getattr(p, c)
+	if kwargs:
+		return c(**kwargs)
+	else:
+		return c()
 
 def route(service, module, method, kwargs):
 	'''
@@ -15,8 +22,17 @@ def route(service, module, method, kwargs):
 		LocalClient.cmd( minion, 'soy_router.route', ['service_name', 'class_name', 'method_name', kwargs] )
 
 	'''
+	
+	service = call( globals()[service], module, **kwargs)
+	return call(service, method)
+
+	'''
+	soy.Nginx.Host(**kwargs).create()
+	
+	
 	base = getattr(soy, service)
 	mid = getattr(base, module)(__salt__, **kwargs)
 	top = getattr(mid, method)()
+	'''
 	
 	#return getattr( getattr( getattr(soy, service), module )(__salt__, **kwargs), method )()
