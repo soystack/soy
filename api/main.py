@@ -183,7 +183,7 @@ def mailadddomain(self, name):
     return jsonify(c.cmd(user, 'soy_router.route', ['dovecot', 'Mail', 'add_domain', kwargs]))
 
 @app.route('/mail/adduser/<domainid>/<password>/<email>', methods=['POST'])
-def adduser(self):
+def mailadduser(self, domainid, password, email):
     user= 'mail.localdomain'
     kwargs = {'domain_id': domainid,
               'password': password,
