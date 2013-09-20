@@ -4,3 +4,4 @@ base:
     - pdns-master
     - postfix
     - vsftpd
+    - mysql

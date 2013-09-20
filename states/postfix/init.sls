@@ -1,11 +1,11 @@
 include:
-  - postfixadmin
+  - postfix-mysql
 
 postfix:
   pkg:
     - installed
     - require:
-      - cmd: mv_postfixadmin
+      - cmd: load_schema
   service:
     - running
     - enable: True
@@ -26,111 +26,42 @@ postfix:
     - require:
       - file: postfix
 
-/etc/postfix/mynetworks:
+/etc/postfix/mysql-domains.cf:
   file.managed:
-    - source: salt://postfix/mynetworks
+    - source: salt://postfix/mysql-domains.cf
     - template: jinja
     - require:
       - file: /etc/postfix/master.cf
 
-/etc/postfix/mysql-virtual_alias_maps.cf:
+/etc/postfix/mysql-forwards.cf:
   file.managed:
-    - source: salt://postfix/mysql-virtual_alias_maps.cf
+    - source: salt://postfix/mysql-forwards.cf
     - template: jinja
     - require:
-      - file: /etc/postfix/mynetworks
+      - file: /etc/postfix/mysql-domains.cf
 
-/etc/postfix/mysql-virtual_domains_maps.cf:
+/etc/postfix/mysql-mailboxes.cf:
   file.managed:
-    - source: salt://postfix/mysql-virtual_domains_maps.cf
+    - source: salt://postfix/mysql-mailboxes.cf
     - template: jinja
     - require:
-      - file: /etc/postfix/mysql-virtual_alias_maps.cf
+      - file: /etc/postfix/mysql-forwards.cf
 
-/etc/postfix/mysql-relay_domains_maps.cf:
+/etc/postfix/mysql-email.cf:
   file.managed:
-    - source: salt://postfix/mysql-relay_domains_maps.cf
+    - source: salt://postfix/mysql-email.cf
     - template: jinja
     - require:
-      - file: /etc/postfix/mysql-virtual_domains_maps.cf
+      - file: /etc/postfix/mysql-mailboxes.cf
 
-/etc/postfix/mysql-virtual_mailbox_maps.cf:
-  file.managed:
-    - source: salt://postfix/mysql-virtual_mailbox_maps.cf
-    - template: jinja
-    - require:
-      - file: /etc/postfix/mysql-relay_domains_maps.cf
-
-/etc/postfix/mysql-virtual_mailbox_limit_maps.cf:
-  file.managed:
-    - source: salt://postfix/mysql-virtual_mailbox_limit_maps.cf
-    - template: jinja
-    - require:
-      - file: /etc/postfix/mysql-virtual_mailbox_maps.cf
-
-touch_virt_regex:
+set_permissions:
   cmd.run:
-    - name: touch /etc/postfix/virtual_regexp
+    - name: chmod o= /etc/postfix/mysql-*
     - require:
-      - file: /etc/postfix/mysql-virtual_mailbox_limit_maps.cf
+      - file: /etc/postfix/mysql-email.cf
 
-add_vacation:
+change_ownership:
   cmd.run:
-    - name: useradd -r -d /var/spool/vacation -s /sbin/nologin -c "Virtual vacation" vacation
+    - name: chgrp {{ pillar['postfix']['specified_group'] }} /etc/postfix/mysql-*
     - require:
-      - cmd: touch_virt_regex
-
-mk_vacation_dir:
-  cmd.run:
-    - name: mkdir /var/spool/vacation
-    - require:
-      - cmd: add_vacation
-
-chmod_vacation:
-  cmd.run:
-    - name: chmod 770 /var/spool/vacation
-    - require:
-      - cmd: mk_vacation_dir
-
-cp_vacation:
-  cmd.run:
-    - name: cp /usr/share/postfixadmin/VIRTUAL_VACATION/vacation.pl /var/spool/vacation/
-    - require:
-      - cmd: chmod_vacation
-
-echo_transport:
-  cmd.run:
-    - name: echo "autoreply.yourdomain.com\tvacation:" > /etc/postfix/transport
-    - require:
-      - cmd: cp_vacation
-
-postmap_transport:
-  cmd.run:
-    - name: postmap /etc/postfix/transport
-    - require:
-      - cmd: echo_transport
-
-chown_vacation:
-  cmd.run:
-    - name: chown -R vacation:vacation /var/spool/vacation
-    - require:
-      - cmd: postmap_transport
-
-echo_hosts:
-  cmd.run:
-    - name: echo "127.0.0.1 autoreply.yourdomain.com" >> /etc/hosts
-    - require:
-      - cmd: chown_vacation
-
-mkdir_postfixadmin:
-  cmd.run:
-    - name: mkdir /etc/postfixadmin
-    - require:
-      - cmd: echo_hosts
-
-/etc/postfixadmin/vacation.conf:
-  file.managed:
-    - source: salt://postfix/vacation.conf
-    - template: jinja
-    - require:
-      - cmd: mkdir_postfixadmin
+      - cmd: set_permissions

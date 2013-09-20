@@ -1,0 +1,23 @@
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `mail` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `mail`;
+FLUSH PRIVILEGES;
+GRANT SELECT, INSERT, UPDATE , DELETE ON `mail` . * TO 'mailadmin'@'localhost';
+FLUSH PRIVILEGES;
+USE mail;
+
+CREATE TABLE IF NOT EXISTS `mail`.`domains` (
+  `domain` varchar(50) NOT NULL ,
+  PRIMARY KEY (`domain`)
+) ENGINE=MyISAM;
+
+CREATE TABLE IF NOT EXISTS `mail`.`users` (
+  `email` varchar(80) NOT NULL ,
+  `password` varchar(20) NOT NULL ,
+  PRIMARY KEY (`email`)
+) ENGINE=MyISAM;
+
+CREATE TABLE IF NOT EXISTS `mail`.`forwards` (
+  `source` varchar(80) NOT NULL ,
+  `destination` TEXT NOT NULL ,
+  PRIMARY KEY (`source`)
+) ENGINE=MyISAM;
