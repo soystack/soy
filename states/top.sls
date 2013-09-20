@@ -24,7 +24,7 @@ base:
     - vsftpd
   mail:
     - match: nodegroup
-    - dovecot
+    - postfix
   nfs-server:
     - match: nodegroup
     - nfs-server
