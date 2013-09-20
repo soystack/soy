@@ -1,14 +1,10 @@
 import MySQLdb
 import time
+from soy import mysql
 
 class DNS(object):
     def __init__(self, __salt__, **kwargs):
-        self.mysql	= {
-            'host'   : __salt__['pillar.raw']('mysql.host'),
-            'port'   : __salt__['pillar.raw']('mysql.port'),
-            'user'   : __salt__['pillar.raw']('mysql.user'),
-            'passwd' : __salt__['pillar.raw']('mysql.pass'),
-            'db'     : __salt__['pillar.raw']('pdns-master')['db']}
+        self.mysql = mysql.Setup(__salt__, 'pdns-master').mysql
 
         for k, v in kwargs.iteritems():
             setattr(self, k, v)
