@@ -177,13 +177,13 @@ def mailforward(domain, source, dest):
     return jsonify(c.cmd(user, 'soy_router.route', ['dovecot', 'Mail', 'forward', kwargs]))
 
 @app.route('/mail/adddomain/<name>', methods=['POST'])
-def mailadddomain(self, name):
+def mailadddomain(name):
     user = 'mail.localdomain'
     kwargs = {'name': name}
     return jsonify(c.cmd(user, 'soy_router.route', ['dovecot', 'Mail', 'add_domain', kwargs]))
 
 @app.route('/mail/adduser/<domainid>/<password>/<email>', methods=['POST'])
-def adduser(domainid, password, email):
+def mailadduser(domainid, password, email):
     user= 'mail.localdomain'
     kwargs = {'domain_id': domainid,
               'password': password,
