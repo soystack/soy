@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
+import ast
 from soy import *
 
-def call(p, c, **kwargs):
-	c = getattr(p, c)
+def call(p, c, kwargs):
+	a = getattr(p, c)
 	if kwargs:
-		return c(**kwargs)
+		return a(**kwargs)
 	else:
-		return c()
+		return a()
 
-def route(service, module, method, kwargs):
+def route(service, module, method, opts):
 	'''
 	router function
 	
@@ -22,8 +23,8 @@ def route(service, module, method, kwargs):
 		LocalClient.cmd( minion, 'soy_router.route', ['service_name', 'class_name', 'method_name', kwargs] )
 
 	'''
-	
-	service = call( globals()[service], module, **kwargs)
+	kwargs = ast.literal_eval(opts)
+	service = call( globals()[service], module, kwargs)
 	return call(service, method)
 
 	'''
