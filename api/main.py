@@ -18,12 +18,12 @@ def nginxcreate(user, host):
     user = 'nginx.localdomain'
     opts = {'user': user,
             'host': host}
-    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'create', opts])
+    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'create', opts]))
 
 @app.route('/nginx/report', methods=['GET'])
 def nginxreport():
     user = 'nginx.localdomain'
-    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'report', {}])
+    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'report', {}]))
 
 @app.route('/nginx/update/<host>/<updated_host>', methods=['PUT'])
 def nginxupdate(host, updated_host):
@@ -38,19 +38,19 @@ def nginxdelete(user, host):
     user = 'nginx.localdomain'
     opts = {'user': user,
             'host': host}
-    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'delete', opts])
+    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'delete', opts]))
 
 @app.route('/nginx/suspend/<host>', methods=['GET'])
 def nginxsuspend(host):
     user = 'nginx.localdomain'
     opts = {'host': host}
-    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'suspend', opts])
+    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'suspend', opts]))
 
 @app.route('/nginx/unsuspend/<host>', methods=['GET'])
 def nginxunsuspend(host):
     user = 'nginx.localdomain'
     opts = {'host': host}
-    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'unsuspend', opts])
+    return jsonify(c.cmd(user, 'soy_router.route', ['nginx', 'Host', 'unsuspend', opts]))
 
 '''
 DNS
@@ -169,7 +169,7 @@ MAIL
 '''
 
 @app.route('/mail/forward/<domain>/<source>/<dest>', methods=['POST'])
-def mailforward(self, domain, source, dest):
+def mailforward(domain, source, dest):
     user = 'mail.localdomain'
     kwargs = {'domain': domain,
               'source': source,
@@ -183,7 +183,7 @@ def mailadddomain(self, name):
     return jsonify(c.cmd(user, 'soy_router.route', ['dovecot', 'Mail', 'add_domain', kwargs]))
 
 @app.route('/mail/adduser/<domainid>/<password>/<email>', methods=['POST'])
-def adduser(self):
+def adduser(domainid, password, email):
     user= 'mail.localdomain'
     kwargs = {'domain_id': domainid,
               'password': password,
