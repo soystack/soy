@@ -16,14 +16,3 @@ def route(service, module, method, opts):
 	lib = 'soy.%s' % service
 	eval 'from %s import %s' % module
 	getattr(globals()[module](**kwargs), method)()
-
-	'''
-	soy.Nginx.Host(**kwargs).create()
-	
-	
-	base = getattr(soy, service)
-	mid = getattr(base, module)(__salt__, **kwargs)
-	top = getattr(mid, method)()
-	'''
-	
-	#return getattr( getattr( getattr(soy, service), module )(__salt__, **kwargs), method )()
