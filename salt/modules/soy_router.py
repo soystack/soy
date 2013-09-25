@@ -13,6 +13,5 @@ def route(service, module, method, opts):
 		LocalClient.cmd( minion, 'soy_router.route', ['service_name', 'class_name', 'method_name', kwargs] )
 
 	'''
-	lib = 'soy.%s' % service
-	eval 'from %s import %s' % module
+	eval 'from soy.%s import %s' % (service, module)
 	getattr(globals()[module](**kwargs), method)()
