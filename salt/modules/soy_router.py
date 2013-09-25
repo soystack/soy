@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from soy import *
-
 def route(service, module, method, opts):
 	'''
 	router function
