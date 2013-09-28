@@ -14,7 +14,7 @@ def prepare(string, *args):
     '''
     try:
         for item in args:
-            filehandle = open(item, 'w+')
+            filehandle = open(item, 'a')
             filehandle.write("%s" % string)
             filehandle.close()
         return True
@@ -27,11 +27,13 @@ def commit(tmpl, path, **kwargs):
     render
     '''
     try:
-        include = Template(open(tmpl, 'w+').read())
+        include = Template(open(tmpl, 'r').read())
         render = include.render(**kwargs)
-        filehandle = open(path, 'w+')
+        filehandle = open(path, 'a')
         filehandle.write("%s" % render)
         filehandle.close()
         return True
     except (OSError, IOError):
         return False
+
+commit('./test.tmpl', './output', **{'name': 'james'})
