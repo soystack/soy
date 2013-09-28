@@ -35,5 +35,3 @@ def commit(tmpl, path, **kwargs):
         return True
     except (OSError, IOError):
         return False
-
-commit('./test.tmpl', './output', **{'name': 'james'})
