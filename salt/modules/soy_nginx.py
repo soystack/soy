@@ -9,12 +9,6 @@ from os import listdir
 
 salt, pillar = {}, {}
 
-
-def loadsalt():
-	global salt, pillar
-	salt = __salt__
-	pillar = salt['pillar.raw']('nginx')
-
 def mkconf(**sls):
 	'''
 	write and symlink nginx host files from template.
@@ -70,7 +64,8 @@ def delete(user, host, user_root=False):
 	remove host tree
 	'''
 	if not globals()['salt']:
-		loadsalt()
+		global salt, pillar
+		salt, pillar = __salt__['soy_utils.loadsalt']('nginx')
 	try:
 		enabled = '%s%s.conf' % (pillar['enabled'], host)
 		available = '%s%s.conf' % (pillar['available'], host)
@@ -89,7 +84,8 @@ def create(user, host):
 	'''
 	build host tree
 	'''
-	loadsalt()
+	global salt, pillar
+	salt, pillar = __salt__['soy_utils.loadsalt']('nginx')
 	root = '%s%s/%s' % (pillar['base'], user, host)
 	htdocs = '%s%s' % (root, pillar['htdocs'])
 	logdir = '%s%s' % (root, pillar['logs'])
@@ -107,7 +103,8 @@ def report(user):
 	'''
 	report domains owned by user
 	'''
-	loadsalt()
+	global salt, pillar
+	salt, pillar = __salt__['soy_utils.loadsalt']('nginx')
 	try:
 		hosts = {}
 		user_root = '%s%s' % (pillar['base'], user)
@@ -124,7 +121,8 @@ def update(user, host, updated_host):
 	'''
 	update domains owned by user
 	'''
-	loadsalt()
+	global salt, pillar
+	salt, pillar = __salt__['soy_utils.loadsalt']('nginx')
 	try:
 		user_root = '%s%s' % (pillar['base'], user)
 		old_domain = '%s%s' % (user_root, host)
@@ -138,7 +136,8 @@ def suspend(**sls):
 	'''
 	suspend users and their hosts
 	'''
-	loadsalt()
+	global salt, pillar
+	salt, pillar = __salt__['soy_utils.loadsalt']('nginx')
 	try:
 		path = '%s%s.conf' % (pillar['available'], sls['host'])
 		link = '%s%s.conf' % (pillar['enabled'], sls['host'])
@@ -155,7 +154,8 @@ def unsuspend(**sls):
 	'''
 	lift suspension
 	'''
-	loadsalt()
+	global salt, pillar
+	salt, pillar = __salt__['soy_utils.loadsalt']('nginx')
 	try:
 		path = '%s%s.conf' % (pillar['available'], sls['host'])
 		link = '%s%s.conf' % (pillar['enabled'], sls['host'])
