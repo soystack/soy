@@ -4,7 +4,6 @@
 soy nginx package for creating and deleting host configuration files.
 '''
 
-import soy.utils as soy
 from os import listdir
 
 salt, pillar = {}, {}
