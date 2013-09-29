@@ -163,7 +163,7 @@ def unsuspend(host):
 		link = '%s%s.conf' % (unsuspend.pillar['enabled'], host)
 		unsuspend.salt['file.remove'](link)
 		unsuspend.salt['file.remove'](path)
-		mkconf(unsuspended)
+		mkconf(unsuspend)
 		unsuspend.salt['nginx.signal']('reload')
 		return True
 	except (OSError, IOError):
