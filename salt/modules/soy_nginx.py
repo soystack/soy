@@ -103,11 +103,8 @@ def report(user):
         hosts = {}
         user_root = '%s%s' % (__pillar__['nginx']['base'], user)
         for pos, host in enumerate(listdir(user_dir)):
-            try:
-                hosts[user][pos] = host
-            except:
-                return False
-            return hosts
+            hosts[user][pos] = host
+        return hosts
     except:
         return False
 
