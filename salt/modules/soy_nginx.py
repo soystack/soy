@@ -37,8 +37,7 @@ def mkdir(htdocs, **sls):
 	'''
 	try:
 		__salt__['file.mkdir'](htdocs)
-		if __pillar__['nginx']['index']:
-			mksource(htdocs, **sls)
+		mksource(htdocs, **sls)
 		return True
 	except (OSError, IOError):
 		return False
