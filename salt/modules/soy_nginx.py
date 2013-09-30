@@ -32,7 +32,7 @@ def mksource(htdocs, **sls):
         raise OSError
 
 
-def mkdirr(htdocs, **sls):
+def mkdir(htdocs, **sls):
     '''
     create htdocs directory
     '''

@@ -6,10 +6,6 @@ c    = LocalClient()
 app  = Flask(__name__)
 
 '''
-Can't use the word 'domains' for placeholders??
-'''
-
-'''
 NGINX
 '''
 
