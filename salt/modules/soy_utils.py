@@ -4,14 +4,6 @@ soy utilities class for rendering files.
 
 from jinja2 import Template
 
-def loadsalt(p):
-	'''
-	create __salt__ shortcut
-	'''
-	salt = __salt__
-	pillar = salt['pillar.raw'](p)
-	return salt, pillar
-
 def prepare(string, *args):
     '''
     write
