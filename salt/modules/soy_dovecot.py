@@ -31,14 +31,14 @@ def forward(**opts):
     except:
         return {'status': False}
 
-def add_domain(**opts):
+def add_domain(name):
     try:
         db, curs = connect()
         curs.execute("""INSERT INTO virtual_domains
                                      (`id`,
                                       `name``)
                         VALUES       (NULL,
-                                      $(name)s)""", **opts)
+                                      %s)""", (name,))
         db.commit()
         return {'status': True}
     except:

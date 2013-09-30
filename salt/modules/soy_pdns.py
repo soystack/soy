@@ -4,7 +4,7 @@ try:
 except:
     print 'Must install MySQL-python'
 
- def dns():
+def dns():
     mysql = __salt__['soy_mysql.setup']('pdns')
     try:
         db = MySQLdb.connect(**mysql)
@@ -13,7 +13,7 @@ except:
     except:
         return False
 
-def createdomain(**opts):
+def createdomain(name, master, last_check, d_type, not_srl, account):
     try:
         db, curs = dns()
         curs.execute("""INSERT INTO domains
@@ -30,7 +30,8 @@ def createdomain(**opts):
                                      %(last_check)s,
                                      %(type)s,
                                      %(notified_serial)s,
-                                     %(account)s)""", **opts)
+                                     %(account)s)""", (name, master, last_check,
+                                                       d_type, not_srl, account,))
         db.commit()
         return {'status': True}
     except:
