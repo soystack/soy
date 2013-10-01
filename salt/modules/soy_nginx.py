@@ -2,10 +2,9 @@
 soy nginx package for creating and deleting host configuration files.
 '''
 
-from os import listdir
+import os
 
-
-def mkconf(**sls):
+def _mkconf(**sls):
     '''
     write and symlink nginx host files from template.
     '''
@@ -19,7 +18,7 @@ def mkconf(**sls):
         return False
 
 
-def mksource(htdocs, **sls):
+def _mksource(htdocs, **sls):
     '''
     write source html template (placeholders)
     '''
@@ -32,19 +31,19 @@ def mksource(htdocs, **sls):
         raise OSError
 
 
-def mkdir(htdocs, **sls):
+def _mkdir(htdocs, **sls):
     '''
     create htdocs directory
     '''
     try:
         __salt__['file.mkdir'](htdocs)
-        mksource(htdocs, **sls)
+        _mksource(htdocs, **sls)
         return True
     except (OSError, IOError):
         return False
 
 
-def mklog(logdir):
+def _mklog(logdir):
     '''
     write log files in specified log directory
     '''
@@ -100,9 +99,9 @@ def report(user):
     report domains owned by user
     '''
     try:
-        hosts = {}
+        hosts = {user: {}}
         user_root = '%s%s' % (__pillar__['nginx']['base'], user)
-        for pos, host in enumerate(listdir(user_dir)):
+        for pos, host in enumerate(os.listdir(user_root)):
             hosts[user][pos] = host
         return hosts
     except:
@@ -149,7 +148,7 @@ def unsuspend(**sls):
         link = '%s%s.conf' % (__pillar__['nginx']['enabled'], sls['host'])
         __salt__['file.remove'](link)
         __salt__['file.remove'](path)
-        mkconf(**sls)
+        _mkconf(**sls)
         __salt__['nginx.signal']('reload')
         return True
     except (OSError, IOError):
