@@ -293,7 +293,7 @@ def checksumtable(**opts):
 def createtable(**opts):
     try:
         conn, curs = connect(opts['db'])
-        query = ''
+        query = str()
         for k, v in opts['fields'].iteritems():
             '''
             example k, v:
@@ -309,6 +309,35 @@ def createtable(**opts):
         return False
     except:
         warn('error whilst creating table', RuntimeWarning)
+        return False
+    finally:
+        conn.close()
+
+def insert(**opts):
+    try:
+        '''
+        opts = {'col': ['id', 'name'],
+                'row': ['NULL', 'jimmy']}
+        '''
+        colset, rowset = str(), str()
+        for eachCol, eachRow in zip(opts['col'], opts['row']):
+            colset += '%s,' % eachCol
+            rowset += '%s,' % eachRow
+        opts['col'] = colset[:-1]
+        opts['row'] = rowset[:-1]
+        '''
+        NOW
+        opts = {'col': "id, name",
+                'row': "NULL, jimmy"}
+        '''
+        conn, curs = connect(opts['db'])
+        curs.execute('''INSERT INTO %(db)s.%(table)s (%(col)s) VALUES (%(row)s)''', **opts)
+        return True
+    except sql.Error as e:
+        warn('mysql error: %s' % e.message, RuntimeWarning)
+        return False
+    except:
+        warn('error while inserting into table', RuntimeWarning)
         return False
     finally:
         conn.close()
