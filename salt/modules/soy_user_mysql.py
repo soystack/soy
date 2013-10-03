@@ -27,10 +27,10 @@ def grant(**opts):
     try:
         conn, curs = connect()
         permset = str()
-        for eachtype in perms:
+        for eachtype in opts['perms']:
             permset += '%s,' % eachtype
-        opts['permset'] = permset[:-1]
-        curs.execute('''GRANT %(permset)s ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s"''', **opts)
+        opts['perms'] = permset[:-1]
+        curs.execute('''GRANT %(perms)s ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s"''', **opts)
         return True
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
@@ -44,7 +44,9 @@ def adduser(**opts):
     try:
         conn, curs = connect()
         curs.execute('''CREATE USER "%(user)s"."%(ip)s" IDENTIFIED BY "%(passwd)s";
-                        GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"."%(ip)s";''', **opts)
+                        GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"."%(ip)s";
+                        GRANT USAGE ON %(db)s.%(table)s
+                        TO "%(user)s"."%(ip)s" WITH MAX_QUERIES_PER_HOUR 100''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
     except:
@@ -63,6 +65,7 @@ def createdb(**opts):
         return False, 'mysql error: %s' % e.message
     except:
         warn('error while creating db', RuntimeWarning)
+        return False
     finally:
         conn.close()
 
@@ -84,5 +87,6 @@ def createtable(**opts):
         return False, 'mysql error: %s' % e.message
     except:
         warn('error whilst creating table', RuntimeWarning)
+        return False
     finally:
         conn.close()
