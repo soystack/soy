@@ -43,10 +43,10 @@ def grant(**opts):
 def adduser(**opts):
     try:
         conn, curs = connect()
-        curs.execute('''CREATE USER "%(user)s"."%(ip)s" IDENTIFIED BY "%(passwd)s";
-                        GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"."%(ip)s";
+        curs.execute('''CREATE USER "%(user)s"@"%(ip)s" IDENTIFIED BY "%(passwd)s";
+                        GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s";
                         GRANT USAGE ON %(db)s.%(table)s
-                        TO "%(user)s"."%(ip)s" WITH MAX_QUERIES_PER_HOUR 100''', **opts)
+                        TO "%(user)s"@"%(ip)s" WITH MAX_QUERIES_PER_HOUR 100''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
     except:
@@ -58,7 +58,7 @@ def adduser(**opts):
 def deleteuser(**opts):
     try:
         conn, curs = connect()
-        curs.execute('''DROP USER %(user)s.%(ip)s''', **opts)
+        curs.execute('''DROP USER %(user)s@%(ip)s''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
     except:
@@ -119,7 +119,7 @@ def createdb(**opts):
     try:
         conn, curs = connect()
         curs.execute('''CREATE DATABASE IF NOT EXISTS %(db)s;
-                        GRANT ALL ON %(db)s.* TO "%(user)s"."%(ip)s";''', **opts)
+                        GRANT ALL ON %(db)s.* TO "%(user)s"@"%(ip)s";''', **opts)
         return True
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
