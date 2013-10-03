@@ -65,18 +65,19 @@ def createdb(**opts):
     finally:
         conn.close()
 
-def createtable(db, name, **fields):
+def createtable(**opts):
     try:
         conn, curs = connect(db)
         query = ''
-        for k, v in fields.iteritems():
+        for k, v in opts['fields'].iteritems():
             '''
             example k, v:
                 k => 'id'
                 v => 'INT AUTO_INCREMENT'
             '''
             query += '%s %s,' % (k, v)
-        curs.execute('''CREATE TABLE %s (%s)''', (name, query[:-1],))
+        opts['fields'] = query[:-1]
+        curs.execute('''CREATE TABLE %(db)s.%(table)s (%(fields)s)''', **opts)
         return True
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
