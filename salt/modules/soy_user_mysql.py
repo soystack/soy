@@ -55,6 +55,66 @@ def adduser(**opts):
     finally:
         conn.close()
 
+def deleteuser(**opts):
+    try:
+        conn, curs = connect()
+        curs.execute('''DROP USER %(user)s.%(ip)s''', **opts)
+    except sql.Error as e:
+        return False, 'mysql error: %s' % e.message
+    except:
+        warn('error while deleting user', RuntimeWarning)
+        return False
+    finally:
+        conn.close()
+
+def update(**opts):
+    try:
+        conn, curs = connect()
+        curs.execute('''UPDATE %(db)s.%(table) SET %(key)s = %(value)s WHERE %(cond)s = %(exp)s''', **opts)
+    except sql.Error as e:
+        return False, 'mysql error: %s' % e.message
+    except:
+        warn('error while updating field', RuntimeWarning)
+        return False
+    finally:
+        conn.close()
+
+def report(**opts):
+    try:
+        conn, curs = connect()
+        curs.execute('''SELECT %(column)s FROM %(db)s.%(table)s WHERE $(cond)s = %(exp)s''', **opts)
+    except sql.Error as e:
+        return False, 'mysql error: %s' % e.message 
+    except:
+        warn('error while reporting rows', RuntimeWarning)
+        return False
+    finally:
+        conn.close()
+
+def deleterow(**opts):
+    try:
+        conn, curs = connect()
+        curs.execute('''DROP FROM %(db)s.%(table)s WHERE %(cond)s = %(exp)s''', **opts)
+    except sql.Error as e:
+        return False, 'mysql error: %s' % e.message
+    except:
+        warn('error while deleting row', RuntimeWarning)
+        return False
+    finally:
+        conn.close()
+
+def dropdb(**opts):
+    try:
+        conn, curs = connect()
+        curs.execute('''DROP DATABASE %(db)s''', **opts)
+    except sql.Error as e:
+        return False, 'mysql error: %s' % e.message
+    except:
+        warn('error while dropping db. most likely syntax related', UserWarning)
+        return False
+    finally:
+        conn.close()
+
 def createdb(**opts):
     try:
         conn, curs = connect()
