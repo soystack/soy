@@ -63,6 +63,7 @@ def createdb(**opts):
         return False, 'mysql error: %s' % e.message
     except:
         warn('error while creating db', RuntimeWarning)
+        return False
     finally:
         conn.close()
 
@@ -84,5 +85,6 @@ def createtable(**opts):
         return False, 'mysql error: %s' % e.message
     except:
         warn('error whilst creating table', RuntimeWarning)
+        return False
     finally:
         conn.close()
