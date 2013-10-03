@@ -25,7 +25,7 @@ def connect(db=None):
 
 def grant(**opts):
     try:
-        conn, curs = connect()
+        conn, curs = connect(opts['db'])
         permset = str()
         for eachtype in opts['perms']:
             permset += '%s,' % eachtype
@@ -42,7 +42,7 @@ def grant(**opts):
 
 def adduser(**opts):
     try:
-        conn, curs = connect()
+        conn, curs = connect(opts['db'])
         curs.execute('''CREATE USER "%(user)s"@"%(ip)s" IDENTIFIED BY "%(passwd)s";
                         GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s";
                         GRANT USAGE ON %(db)s.%(table)s
@@ -57,7 +57,7 @@ def adduser(**opts):
 
 def deleteuser(**opts):
     try:
-        conn, curs = connect()
+        conn, curs = connect(opts['db'])
         curs.execute('''DROP USER %(user)s@%(ip)s''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
@@ -69,7 +69,7 @@ def deleteuser(**opts):
 
 def update(**opts):
     try:
-        conn, curs = connect()
+        conn, curs = connect(opts['db'])
         curs.execute('''UPDATE %(db)s.%(table) SET %(key)s = %(value)s WHERE %(cond)s = %(exp)s''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
@@ -81,7 +81,7 @@ def update(**opts):
 
 def report(**opts):
     try:
-        conn, curs = connect()
+        conn, curs = connect(opts['db'])
         curs.execute('''SELECT %(column)s FROM %(db)s.%(table)s WHERE $(cond)s = %(exp)s''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message 
@@ -93,7 +93,7 @@ def report(**opts):
 
 def deleterow(**opts):
     try:
-        conn, curs = connect()
+        conn, curs = connect(opts['db'])
         curs.execute('''DROP FROM %(db)s.%(table)s WHERE %(cond)s = %(exp)s''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
@@ -131,7 +131,7 @@ def createdb(**opts):
 
 def createtable(**opts):
     try:
-        conn, curs = connect(db)
+        conn, curs = connect(opts['db'])
         query = ''
         for k, v in opts['fields'].iteritems():
             '''
