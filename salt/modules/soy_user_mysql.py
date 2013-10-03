@@ -44,7 +44,9 @@ def adduser(**opts):
     try:
         conn, curs = connect()
         curs.execute('''CREATE USER "%(user)s"."%(ip)s" IDENTIFIED BY "%(passwd)s";
-                        GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"."%(ip)s";''', **opts)
+                        GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"."%(ip)s";
+                        GRANT USAGE ON %(db)s.%(table)s
+                        TO "%(user)s"."%(ip)s" WITH MAX_QUERIES_PER_HOUR 100''', **opts)
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
     except:
