@@ -27,10 +27,10 @@ def grant(**opts):
     try:
         conn, curs = connect()
         permset = str()
-        for eachtype in perms:
+        for eachtype in opts['perms']:
             permset += '%s,' % eachtype
-        opts['permset'] = permset[:-1]
-        curs.execute('''GRANT %(permset)s ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s"''', **opts)
+        opts['perms'] = permset[:-1]
+        curs.execute('''GRANT %(perms)s ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s"''', **opts)
         return True
     except sql.Error as e:
         return False, 'mysql error: %s' % e.message
