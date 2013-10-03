@@ -48,7 +48,7 @@ def adduser(**opts):
         curs.execute('''CREATE USER "%(user)s"@"%(ip)s" IDENTIFIED BY "%(passwd)s";
                         GRANT SELECT, INSERT ON %(db)s.%(table)s TO "%(user)s"@"%(ip)s";
                         GRANT USAGE ON %(db)s.%(table)s
-                        TO "%(user)s"@"%(ip)s" WITH MAX_QUERIES_PER_HOUR 100''', **opts)
+                        TO "%(user)s"@"%(ip)s" WITH MAX_QUERIES_PER_HOUR 100;''', **opts)
         return True
     except sql.Error as e:
         warn('mysql error: %s' % e.message, RuntimeWarning)
@@ -62,7 +62,7 @@ def adduser(**opts):
 def deleteuser(**opts):
     try:
         conn, curs = connect(opts['db'])
-        curs.execute('''DROP USER %(user)s@%(ip)s''', **opts)
+        curs.execute('''DROP USER "%(user)s"@"%(ip)s"''', **opts)
         return True
     except sql.Error as e:
         warn('mysql error: %s' % e.message, RuntimeWarning)
@@ -94,7 +94,7 @@ def revokeuser(**opts):
         for eachtype in opts['perms']:
             permset += '%s,' % eachtype
         opts['perms'] = permset[:-1]
-        curs.execute('''REVOKE %(perms)s ON %(db)s.%(table) FROM "%(user)s"@"%(ip)s"''', **opts)
+        curs.execute('''REVOKE %(perms)s ON %(db)s.%(table)s FROM "%(user)s"@"%(ip)s"''', **opts)
         return True
     except sql.Error as e:
         warn('mysql error: %s' % e.message, RuntimeWarning)
@@ -122,7 +122,7 @@ def setpasswduser(**opts):
 def update(**opts):
     try:
         conn, curs = connect(opts['db'])
-        curs.execute('''UPDATE %(db)s.%(table) SET %(key)s = %(value)s WHERE %(cond)s = %(exp)s''', **opts)
+        curs.execute('''UPDATE %(db)s.%(table)s SET %(key)s = %(value)s WHERE %(cond)s = %(exp)s''', **opts)
         return True
     except sql.Error as e:
         warn('mysql error: %s' % e.message, RuntimeWarning)
@@ -170,7 +170,7 @@ def dropdb(**opts):
         warn('mysql error: %s' % e.message, RuntimeWarning)
         return False
     except:
-        warn('error while dropping db. most likely syntax related', UserWarning)
+        warn('error while dropping db', RuntimeWarning)
         return False
     finally:
         conn.close()
@@ -211,7 +211,7 @@ def backuptable(**opts):
         for table in opts['table']:
             tableset += '%s,' % table
         opts['table'] = tableset[:-1]
-        curs.execute('''BACKUP TABLE %(db)s.%(table) TO %(dir)s''', **opts)
+        curs.execute('''BACKUP TABLE %(db)s.%(table)s TO %(dir)s''', **opts)
         return True
     except sql.Error as e:
         warn('mysql error: %s' % e.message, RuntimeWarning)
@@ -316,6 +316,7 @@ def createtable(**opts):
 def insert(**opts):
     try:
         '''
+        BEFORE
         opts = {'col': ['id', 'name'],
                 'row': ['NULL', 'jimmy']}
         '''
@@ -326,7 +327,7 @@ def insert(**opts):
         opts['col'] = colset[:-1]
         opts['row'] = rowset[:-1]
         '''
-        NOW
+        AFTER
         opts = {'col': "id, name",
                 'row': "NULL, jimmy"}
         '''
