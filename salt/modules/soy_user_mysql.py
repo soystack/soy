@@ -6,6 +6,7 @@ try:
     import MySQLdb as sql
 except ImportError:
     warn('MySQL-python must be installed', ImportWarning)
+    exit()
 
 def connect(db=None):
     try:
